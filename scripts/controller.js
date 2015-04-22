@@ -256,10 +256,6 @@ app.controller = (function () {
         });
     }
 
-    function redirectTo(url) {
-        window.location = url;
-    }
-
     function formatDate(isoString) {
         var timestamp = new Date(Date.parse(isoString)),
             months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -267,10 +263,121 @@ app.controller = (function () {
         return timestamp.getDate() + '-' + months[timestamp.getMonth()] + '-' + timestamp.getFullYear()
             + ' ' + timestamp.getHours() + ':' + timestamp.getMinutes();
     }
+    
+    // Keep this method
+    function redirectTo(url) {
+        window.location = url;
+    }
+
+    // Category Controller
+    // Will be moved to separate script with require.js
+
+    function CategoryController(data) {
+        this._data = data;
+    }
+
+    CategoryController.prototype.showCategory = function(selector) {
+        
+    }
+
+    CategoryController.prototype.showAll = function(selector) {
+        this._data.categoriesRepository.getAll()
+            .then(
+            function(data) {
+                $.get('./views/category/all-categories.html', function (view) {
+                        output = Mustache.render(view, data);
+                        $(selector).html(output);
+                    });
+            },
+            function(error) {
+                Noty.error("Error loading categories.");
+            }
+        );
+    }
+
+    CategoryController.prototype.new = function(selector) {
+        $(selector).load('./views/category/new-category.html');
+    }
+
+    CategoryController.prototype.create = function(params) {
+        var categoryData = {
+                name: params['category-name']
+                // createdBy: {
+                //     __type: "Pointer",
+                //     className: "_User",
+                //     objectId: userId
+                // }
+            };
+    
+        this._data.categoriesRepository.add(categoryData)  // , userId
+            .then(
+            function(data) {
+                redirectTo('#/categories');
+                Noty.success('Category successfully added.');
+            }, 
+            function(erorr) {
+                Noty.error('Error submitting category.');
+            })
+    }
+
+    CategoryController.prototype.edit = function(id, selector) {
+        this._data.categoriesRepository.getById(id)
+            .then(function(data) {
+                $.get('./views/category/edit-category.html', function (view) {
+                        output = Mustache.render(view, data);
+                        $(selector).html(output);
+                    });
+            }, 
+            function(erorr) {
+                Noty.error('Error getting category info.');
+            })
+    }
+
+    CategoryController.prototype.update = function(params) {
+        categoryData = {
+            name: params['category-name']
+        }
+
+        this._data.categoriesRepository.updateCategory(params['id'], categoryData)
+            .then(function(data) {
+                redirectTo('#/categories');
+            }, 
+            function(erorr) {
+                Noty.error('Error updating category.');
+            })
+    }
+
+    CategoryController.prototype.delete = function(id) {
+        this._data.categoriesRepository.delete(id)
+            .then(function(data) {
+                redirectTo('#/categories');
+            }, 
+            function(erorr) {
+                Noty.error('Error deleting category.');
+            })
+    }
+
+    // Events for categories views 
+
+    // CategoryController.prototype.attachEventHandlers = function() {
+    //     var selector = "#main";
+
+    //     attachNewCategoryEvents.call(this, selector);
+    // }
+
+    // var attachNewCategoryEvents = function(selector) {
+    //     var _this = this;
+
+    //     // events for new category view
+    // }
 
     return {
-        get: function (data) {
-            return new BaseController(data);
+        getControllers: function (data) {
+            return {
+                categoryController: new CategoryController(data)
+                
+                // add new controllers here
+            }
         }
     }
 }());

@@ -5,14 +5,15 @@ app.data = (function () {
     function Data (baseUrl, ajaxRequester) {
         this.users = new Users(baseUrl, ajaxRequester);
         this.posts = new Posts(baseUrl, ajaxRequester);
+        this.categoriesRepository = new CategoriesRepository(baseUrl, ajaxRequester);
     }
 
     var credentials = (function () {
 
         function getHeaders() {
             var headers = {
-                    'X-Parse-Application-Id': 'fnU9ApPBEPkU6nliVDeABkP0G4unT2FwV26r4cXc',
-                    'X-Parse-REST-API-Key': 'noNdpXaiJvgfN8Yxp76iSutzKcuRY3tW2BjPHSmr'
+                    'X-Parse-Application-Id': 'Jzz7mwlDky5ROWzs4fgY74ZuEAACu6jDyE0jVZks',
+                    'X-Parse-REST-API-Key': 'Pd0a05VUVLGNEFUyTqQNUF20GlrJhPDmsmpD0Dv1'
                 },
                 currentUser = getSessionToken();
 
@@ -161,6 +162,42 @@ app.data = (function () {
 
         return Posts;
     }());
+    
+    // Category repository
+
+    var CategoriesRepository = (function() {
+        var CATEGORIES_URL = 'classes/Category';
+
+        function CategoriesRepository(baseUrl, ajaxRequester) {
+            this._serviceUrl = baseUrl + CATEGORIES_URL;
+            this._ajaxRequester = ajaxRequester;
+        }
+
+        CategoriesRepository.prototype.add = function(category, objectOwnerId) {
+            // category.ACL = { };
+            // category.ACL[objectOwnerId] = {"write": true, "read": true};
+            // category.ACL['*'] = {"read": true};
+            return this._ajaxRequester.post(this._serviceUrl, category, credentials.getHeaders());
+        }
+
+        CategoriesRepository.prototype.getAll = function() {
+            return this._ajaxRequester.get(this._serviceUrl, credentials.getHeaders());
+        }
+
+        CategoriesRepository.prototype.getById = function(id) {
+            return this._ajaxRequester.get(this._serviceUrl + '/' + id, credentials.getHeaders());
+        }
+
+        CategoriesRepository.prototype.updateCategory = function(id, data) {
+            return this._ajaxRequester.put(this._serviceUrl + '/' + id, data, credentials.getHeaders());
+        }
+
+        CategoriesRepository.prototype.delete = function(id) {
+            return this._ajaxRequester.delete(this._serviceUrl + '/' + id, credentials.getHeaders());
+        }
+
+        return CategoriesRepository;
+    })();
 
     return {
         get: function (baseUrl, ajaxRequester) {
