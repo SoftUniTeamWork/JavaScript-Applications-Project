@@ -232,18 +232,19 @@ app.controller = (function () {
         });
     }
 
-    var attachRegisterHandler = function (selector) {
-        var _this = this;
-        console.log(_this);
+    var attachRegisterHandler = function (selector,data) {
+
 
         $(selector).on('click', '#reg-btn', function () {
+
+
             var userRegData = {
                 username: $('#reg-username').val(),
                 password: $('#reg-password').val(),
                 email: $('#reg-email').val()
             };
 
-            _this._data.users.register(userRegData)
+            data.users.register(userRegData)
                 .then(function (data) {
                     Noty.success("Registration successful.");
                     redirectTo('#/');
@@ -272,9 +273,9 @@ app.controller = (function () {
     }
 
     LogController.prototype.loadRegister = function (selector) {
-
+        var data = this._data;
         $(selector).load('./views/log/register.html',function(){
-            attachRegisterHandler(selector)
+            attachRegisterHandler(selector,data)
         });
     }
 
