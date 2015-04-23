@@ -214,7 +214,7 @@ app.controller = (function () {
     }
 
     var attachLoginHandler = function (selector,data) {
-
+        var _data = data;
 
         $(selector).on('click', '#login-btn', function () {
             var username = $('#login-username').val(),
@@ -222,7 +222,7 @@ app.controller = (function () {
 
             data.users.login(username, password)
                 .then(function (data) {
-                    redirectTo('#/');
+                    redirectTo('#/categories/showall/' + _data.users.getUserData().userId);
 					Noty.success("Successfully logged in.");
                 },
                 function (error) {
@@ -290,10 +290,8 @@ app.controller = (function () {
         //console.log(this._data)
         this._data.users.logout();
         Noty.success("Successfully logged out.");
-        redirectTo('#/');
+        redirectTo('#/login');
     }
-
-
 
     // Category Controller
     // Will be moved to separate script with require.js
@@ -585,13 +583,40 @@ app.controller = (function () {
         return PhotoController;
     })();
 
+    // Navigation Controller
+    // Will be moved to separate script with require.js
+
+    var NavigationController = (function(){
+        function NavigationController(data) {
+           this._data = data;
+        }
+
+        NavigationController.prototype.showProfileNavigation = function(selector) {
+            var _this = this;
+            $.get('./views/navigation/profile-navigation.html', function (view) {
+                    var data = _this._data.users.getUserData();                
+                    output = Mustache.render(view, data);
+                    $(selector).html(output);
+                });
+        }
+
+        NavigationController.prototype.showDefaultNavigation = function(selector) {
+            $.get('./views/navigation/default.html', function (view) {
+                        $(selector).html(view);
+                });
+        }
+
+        return NavigationController;
+    })();
+
     return {
         getControllers: function (data) {
             return {
                 categoryController: new CategoryController(data),
                 logController: new LogController(data),
                 albumController: new AlbumController(data),
-                photoController: new PhotoController(data)
+                photoController: new PhotoController(data),
+                navigationController: new NavigationController(data)
                 // add new controllers here
             }
         }

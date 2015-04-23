@@ -83,7 +83,6 @@ app.data = (function () {
                     credentials.setSessionToken(data.sessionToken);
                     credentials.setUsername(data.username);
                     credentials.setUserId(data.objectId);
-                    console.log(url);
                     return data;
                 });
         }
