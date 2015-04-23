@@ -72,13 +72,15 @@ app.data = (function () {
         }
 
         Users.prototype.login = function (username, password) {
-            var url = this._serviceUrl + 'login?username=' + username + '&password=' + password;
 
+            var url = this._serviceUrl + 'login?username=' + username + '&password=' + password;
+            console.log(url);
             return this._ajaxRequester.get(url, credentials.getHeaders())
                 .then(function (data) {
                     credentials.setSessionToken(data.sessionToken);
                     credentials.setUsername(data.username);
                     credentials.setUserId(data.objectId);
+                    console.log(url);
                     return data;
                 });
         }
@@ -202,6 +204,7 @@ app.data = (function () {
     return {
         get: function (baseUrl, ajaxRequester) {
             return new Data(baseUrl, ajaxRequester);
+            //return new Users(baseUrl, ajaxRequester);
         }
     }
 }());

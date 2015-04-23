@@ -52,12 +52,10 @@ app.controller = (function () {
         }
     }
 
-    BaseController.prototype.loadLogin = function (selector) {
-        $(selector).load('./views/login.html');
-    }
+
 
     BaseController.prototype.loadRegister = function (selector) {
-        $(selector).load('./views/register.html');
+        $(selector).load('./views/log/register.html');
     }
 
     BaseController.prototype.logout = function (selector) {
@@ -215,13 +213,14 @@ app.controller = (function () {
         });
     }
 
-    var attachLoginHandler = function (selector) {
-        var _this = this;
+    var attachLoginHandler = function (selector,data) {
+
+
         $(selector).on('click', '#login-btn', function () {
             var username = $('#login-username').val(),
                 password = $('#login-password').val();
 
-            _this._data.users.login(username, password)
+            data.users.login(username, password)
                 .then(function (data) {
                     redirectTo('#/');
 					Noty.success("Successfully logged in.");
@@ -235,14 +234,13 @@ app.controller = (function () {
 
     var attachRegisterHandler = function (selector) {
         var _this = this;
+        console.log(_this);
+
         $(selector).on('click', '#reg-btn', function () {
             var userRegData = {
                 username: $('#reg-username').val(),
                 password: $('#reg-password').val(),
-                name: $('#reg-name').val(),
-                about: $('#reg-about').val(),
-                gender: $('input[name="gender-radio"]:checked').val(),
-                picture: $('#reg-picture').attr('data-picture-data')
+                email: $('#reg-email').val()
             };
 
             _this._data.users.register(userRegData)
@@ -268,6 +266,33 @@ app.controller = (function () {
     function redirectTo(url) {
         window.location = url;
     }
+
+    function LogController(data){
+        this._data = data
+    }
+
+    LogController.prototype.loadRegister = function (selector) {
+
+        $(selector).load('./views/log/register.html',function(){
+            attachRegisterHandler(selector)
+        });
+    }
+
+    LogController.prototype.loadLogin = function (selector) {
+        var data = this._data
+        $(selector).load('./views/log/login.html', function(){
+            attachLoginHandler(selector,data);
+        });
+    }
+
+    LogController.prototype.logout = function (selector) {
+        //console.log(this._data)
+        this._data.users.logout();
+        Noty.success("Successfully logged out.");
+        redirectTo('#/');
+    }
+
+
 
     // Category Controller
     // Will be moved to separate script with require.js
@@ -374,8 +399,8 @@ app.controller = (function () {
     return {
         getControllers: function (data) {
             return {
-                categoryController: new CategoryController(data)
-                
+                categoryController: new CategoryController(data),
+                logController: new LogController(data)
                 // add new controllers here
             }
         }

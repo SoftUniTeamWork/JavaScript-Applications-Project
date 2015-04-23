@@ -60,7 +60,24 @@ var app = app || {};
 
         this.get('#/categories/delete/:id', function () {
             controllers.categoryController.delete(this.params['id']);
+            console.log(this.params);
         });
+        this.get('#/login', function () {
+            controllers.logController.loadLogin(mainSelector);
+
+        });
+
+        this.get('#/register', function () {
+            controllers.logController.loadRegister(mainSelector);
+
+        });
+
+        this.get('#/logout', function () {
+            controllers.logController.logout(mainSelector,data);
+            //console.log(data.users);
+
+        });
+
     });
 
     app.router.run('#/');
