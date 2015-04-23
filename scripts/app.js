@@ -75,7 +75,7 @@ var app = app || {};
         });
 
         this.get('#/logout', function () {
-            controllers.logController.logout(mainSelector,data);
+            controllers.logController.logout(mainSelector);
             //console.log(data.users);
 
         });
