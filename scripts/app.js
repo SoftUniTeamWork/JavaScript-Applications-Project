@@ -38,6 +38,7 @@ var app = app || {};
 
         // New routes
 
+        // Category routes
         this.get('#/categories', function () {
             controllers.categoryController.showAll(mainSelector);
         });
@@ -61,6 +62,33 @@ var app = app || {};
         this.get('#/categories/delete/:id', function () {
             controllers.categoryController.delete(this.params['id']);
         });
+
+        // Album routes
+        this.get('#/albums/new', function () {
+            controllers.albumController.new(mainSelector);
+        });
+
+        this.post('#/albums/create', function () {
+            controllers.albumController.create(this.params);
+        });
+
+        this.get('#/albums/edit/:id', function () {
+            controllers.albumController.edit(this.params['id'], mainSelector);
+        });
+
+        this.put('#/albums/update/:id', function () {
+            controllers.albumController.update(this.params);
+        });
+
+        this.get('#/albums/delete/:id', function () {
+            controllers.albumController.delete(this.params['id']);
+        });
+
+        this.get('#/albums/:categoryId', function () {
+            controllers.albumController.showAlbumsFromCategory(this.params['categoryId'], mainSelector);
+        });
+
+
     });
 
     app.router.run('#/');

@@ -1,0 +1,16 @@
+<h3>Albums: </h3>
+<ul id="albums-list">
+    {{#results}}
+    <li class="album" data-id="{{objectId}}" data-name="{{name}}">
+        <div class="album-info">
+            <p class="album-name">{{name}}</p>
+        </div>
+        <a href="#/albums/edit/{{objectId}}">
+            <button class="edit-button">Edit</button>
+        </a>
+        <a href="#/albums/delete/{{objectId}}">
+            <button class="delete-button">Delete</button>
+        </a>
+    </li>
+    {{/results}}
+</ul>
