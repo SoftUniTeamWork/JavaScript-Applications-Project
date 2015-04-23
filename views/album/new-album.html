@@ -1,0 +1,14 @@
+<div>
+    <h2>Create new album</h2>
+    <form action="#/albums/create" method="POST">
+        <fieldset>
+            <input type="text" name="album-name">
+            <select name="category-id">
+                {{#results}}
+                <option value="{{objectId}}">{{name}}</option>
+                {{/results}}
+            </select>
+            <input type="submit"/>
+        </fieldset>
+    </form>
+</div>

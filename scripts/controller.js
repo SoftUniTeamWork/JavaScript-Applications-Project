@@ -297,90 +297,94 @@ app.controller = (function () {
     // Category Controller
     // Will be moved to separate script with require.js
 
-    function CategoryController(data) {
-        this._data = data;
-    }
-
-    CategoryController.prototype.showCategory = function(selector) {
-        
-    }
-
-    CategoryController.prototype.showAll = function(selector) {
-        this._data.categoriesRepository.getAll()
-            .then(
-            function(data) {
-                $.get('./views/category/all-categories.html', function (view) {
-                        output = Mustache.render(view, data);
-                        $(selector).html(output);
-                    });
-            },
-            function(error) {
-                Noty.error("Error loading categories.");
-            }
-        );
-    }
-
-    CategoryController.prototype.new = function(selector) {
-        $(selector).load('./views/category/new-category.html');
-    }
-
-    CategoryController.prototype.create = function(params) {
-        var categoryData = {
-                name: params['category-name']
-                // createdBy: {
-                //     __type: "Pointer",
-                //     className: "_User",
-                //     objectId: userId
-                // }
-            };
-    
-        this._data.categoriesRepository.add(categoryData)  // , userId
-            .then(
-            function(data) {
-                redirectTo('#/categories');
-                Noty.success('Category successfully added.');
-            }, 
-            function(erorr) {
-                Noty.error('Error submitting category.');
-            })
-    }
-
-    CategoryController.prototype.edit = function(id, selector) {
-        this._data.categoriesRepository.getById(id)
-            .then(function(data) {
-                $.get('./views/category/edit-category.html', function (view) {
-                        output = Mustache.render(view, data);
-                        $(selector).html(output);
-                    });
-            }, 
-            function(erorr) {
-                Noty.error('Error getting category info.');
-            })
-    }
-
-    CategoryController.prototype.update = function(params) {
-        categoryData = {
-            name: params['category-name']
+    var CategoryController = (function(){
+        function CategoryController(data) {
+            this._data = data;
         }
 
-        this._data.categoriesRepository.updateCategory(params['id'], categoryData)
-            .then(function(data) {
-                redirectTo('#/categories');
-            }, 
-            function(erorr) {
-                Noty.error('Error updating category.');
-            })
-    }
+        CategoryController.prototype.showCategory = function(selector) {
+            
+        }
 
-    CategoryController.prototype.delete = function(id) {
-        this._data.categoriesRepository.delete(id)
-            .then(function(data) {
-                redirectTo('#/categories');
-            }, 
-            function(erorr) {
-                Noty.error('Error deleting category.');
-            })
-    }
+        CategoryController.prototype.showAll = function(selector) {
+            this._data.categoriesRepository.getAll()
+                .then(
+                function(data) {
+                    $.get('./views/category/all-categories.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).html(output);
+                        });
+                },
+                function(error) {
+                    Noty.error("Error loading categories.");
+                }
+            );
+        }
+
+        CategoryController.prototype.new = function(selector) {
+            $(selector).load('./views/category/new-category.html');
+        }
+
+        CategoryController.prototype.create = function(params) {
+            var categoryData = {
+                    name: params['category-name']
+                    // createdBy: {
+                    //     __type: "Pointer",
+                    //     className: "_User",
+                    //     objectId: userId
+                    // }
+                };
+        
+            this._data.categoriesRepository.add(categoryData)  // , userId
+                .then(
+                function(data) {
+                    redirectTo('#/categories');
+                    Noty.success('Category successfully added.');
+                }, 
+                function(erorr) {
+                    Noty.error('Error submitting category.');
+                })
+        }
+
+        CategoryController.prototype.edit = function(id, selector) {
+            this._data.categoriesRepository.getById(id)
+                .then(function(data) {
+                    $.get('./views/category/edit-category.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).html(output);
+                        });
+                }, 
+                function(erorr) {
+                    Noty.error('Error getting category info.');
+                })
+        }
+
+        CategoryController.prototype.update = function(params) {
+            categoryData = {
+                name: params['category-name']
+            }
+
+            this._data.categoriesRepository.updateCategory(params['id'], categoryData)
+                .then(function(data) {
+                    redirectTo('#/categories');
+                }, 
+                function(erorr) {
+                    Noty.error('Error updating category.');
+                })
+        }
+
+        CategoryController.prototype.delete = function(id) {
+            this._data.categoriesRepository.delete(id)
+                .then(function(data) {
+                    redirectTo('#/categories');
+                }, 
+                function(erorr) {
+                    Noty.error('Error deleting category.');
+                })
+        }
+
+        return CategoryController;
+    })();
 
     // Events for categories views 
 
@@ -396,11 +400,117 @@ app.controller = (function () {
     //     // events for new category view
     // }
 
+    // Album Controller
+    // Will be moved to separate script with require.js
+
+    var AlbumController = (function(){
+        function AlbumController(data) {
+            this._data = data;
+        }
+
+        AlbumController.prototype.showAlbum = function(selector) {
+            
+        }
+
+        AlbumController.prototype.showAlbumsFromCategory = function(id, selector) {
+            this._data.albumsRepository.getAlbumsByCategoryId(id)
+                .then(
+                function(data) {
+                    $.get('./views/album/albums-from-category.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).html(output);
+                        });
+                },
+                function(error) {
+                    Noty.error("Error loading albums.");
+                }
+            );
+        }
+
+        AlbumController.prototype.new = function(selector) {
+            this._data.categoriesRepository.getAll()
+                .then(function(data) {
+                    $.get('./views/album/new-album.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).html(output);
+                        });
+                }, 
+                function(erorr) {
+                    Noty.error('Error getting categories list.');
+                })
+           // $(selector).load('./views/album/new-album.html');
+        }
+
+        AlbumController.prototype.create = function(params) {
+            var albumData = {
+                    name: params['album-name'],
+                    categoryId: {__type: 'Pointer', className: 'Category', objectId: params['category-id']}
+                    // createdBy: {
+                    //     __type: "Pointer",
+                    //     className: "_User",
+                    //     objectId: userId
+                    // }
+                };
+        
+            this._data.albumsRepository.add(albumData)  // , userId, categoryId
+                .then(
+                function(data) {
+                    redirectTo('#/categories');
+                    Noty.success('Album successfully added.');
+                }, 
+                function(erorr) {
+                    Noty.error('Error creating album.');
+                })
+        }
+
+        AlbumController.prototype.edit = function(id, selector) {
+            this._data.albumsRepository.getById(id)
+                .then(function(data) {
+                    $.get('./views/album/edit-album.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).html(output);
+                        });
+                }, 
+                function(erorr) {
+                    Noty.error('Error getting album info.');
+                })
+        }
+
+        AlbumController.prototype.update = function(params) {
+            albumData = {
+                name: params['album-name']
+            }
+
+            this._data.albumsRepository.updateAlbum(params['id'], albumData)
+                .then(function(data) {
+                    redirectTo('#/categories');
+                }, 
+                function(erorr) {
+                    Noty.error('Error updating album.');
+                })
+        }
+
+        AlbumController.prototype.delete = function(id) {
+            this._data.albumsRepository.delete(id)
+                .then(function(data) {
+                    redirectTo('#/categories');
+                }, 
+                function(erorr) {
+                    Noty.error('Error deleting album.');
+                })
+        }
+
+        return AlbumController;
+    })();
+
+
+
     return {
         getControllers: function (data) {
             return {
                 categoryController: new CategoryController(data),
-                logController: new LogController(data)
+                logController: new LogController(data),
+                albumController: new AlbumController(data)
                 // add new controllers here
             }
         }

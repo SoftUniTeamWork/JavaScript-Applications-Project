@@ -6,6 +6,7 @@ app.data = (function () {
         this.users = new Users(baseUrl, ajaxRequester);
         this.posts = new Posts(baseUrl, ajaxRequester);
         this.categoriesRepository = new CategoriesRepository(baseUrl, ajaxRequester);
+        this.albumsRepository = new AlbumsRepository(baseUrl, ajaxRequester);
     }
 
     var credentials = (function () {
@@ -199,6 +200,43 @@ app.data = (function () {
         }
 
         return CategoriesRepository;
+    })();
+
+    // Album repository
+
+    var AlbumsRepository = (function() {
+        var ALBUMS_URL = 'classes/Album';
+
+        function AlbumsRepository(baseUrl, ajaxRequester) {
+            this._serviceUrl = baseUrl + ALBUMS_URL;
+            this._ajaxRequester = ajaxRequester;
+        }
+
+        AlbumsRepository.prototype.add = function(album, objectOwnerId) {
+            // album.ACL = { };
+            // album.ACL[objectOwnerId] = {"write": true, "read": true};
+            // album.ACL['*'] = {"read": true};
+            return this._ajaxRequester.post(this._serviceUrl, album, credentials.getHeaders());
+        }
+
+        AlbumsRepository.prototype.getAlbumsByCategoryId = function(id) { // get by category id
+            return this._ajaxRequester.get(this._serviceUrl + '?where={"categoryId":{"__type": "Pointer","className": "Category","objectId": "' + id + '"}}',
+                credentials.getHeaders());
+        }
+
+        AlbumsRepository.prototype.getById = function(id) {
+            return this._ajaxRequester.get(this._serviceUrl + '/' + id, credentials.getHeaders());
+        }
+
+        AlbumsRepository.prototype.updateAlbum = function(id, data) {
+            return this._ajaxRequester.put(this._serviceUrl + '/' + id, data, credentials.getHeaders());
+        }
+
+        AlbumsRepository.prototype.delete = function(id) {
+            return this._ajaxRequester.delete(this._serviceUrl + '/' + id, credentials.getHeaders());
+        }
+
+        return AlbumsRepository;
     })();
 
     return {
