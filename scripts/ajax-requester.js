@@ -9,14 +9,17 @@ app.ajaxRequester = (function() {
         this.delete = makeDeleteRequest;
     }
 
-    function makeRequest(url, method, data, headers) {
+    function makeRequest(url, method, data, headers, processData, stringify) {
         var queue = Q.defer();
+        processData = processData === undefined || processData === true;
+        data = stringify === undefined || stringify === true ? JSON.stringify(data) : data;
 
         $.ajax({
             url: url,
             method: method,
+            processData: processData,
             contentType: "application/json",
-            data: JSON.stringify(data) || undefined,
+            data: data,
             headers: headers,
             success: function(data) {
                 queue.resolve(data);
@@ -33,8 +36,8 @@ app.ajaxRequester = (function() {
         return makeRequest(url, "GET", null, headers);
     }
 
-    function makePostRequest(url, data, headers) {
-        return makeRequest(url, "POST", data, headers);
+    function makePostRequest(url, data, headers, processData, stringify) {
+        return makeRequest(url, "POST", data, headers, processData, stringify);
     }
 
     function makePutRequest(url, data, headers) {

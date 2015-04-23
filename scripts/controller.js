@@ -501,14 +501,97 @@ app.controller = (function () {
         return AlbumController;
     })();
 
+    // Photo Controller
+    // Will be moved to separate script with require.js
 
+    var PhotoController = (function(){
+        function PhotoController(data) {
+            this._data = data;
+        }
+
+        PhotoController.prototype.showPhoto = function(selector) {
+            
+        }
+
+        PhotoController.prototype.showPhotosFromAlbum = function(id, selector) {
+            this._data.photosRepository.getPhotosByAlbumId(id)
+                .then(
+                function(data) {
+                    $.get('./views/photo/photos-from-album.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).html(output);
+                        });
+                },
+                function(error) {
+                    Noty.error("Error loading photos.");
+                }
+            );
+        }
+
+        PhotoController.prototype.new = function(id, selector) {
+            $.get('./views/photo/new-photo.html', function (view) {
+                        var data = {
+                            albumId: id
+                        }
+                        var output = Mustache.render(view, data);
+                        $(selector).html(output);
+                    });
+        }
+
+        PhotoController.prototype.create = function(params) {
+            var _this = this,
+                userId = this._data.users.getUserData().userId,
+                picInput = document.getElementById('photoInput'),
+                picture = picInput.files[0]; 
+
+            this._data.filesRepository.upload(picture)
+            .then(
+                function(data) {
+                    var photoData = {
+                        name: params['photo-name'],
+                        picture: {
+                            '__type': 'File',
+                            'url': data.url,
+                            'name': data.name
+                        },
+                        albumId: {__type: 'Pointer', className: 'Album', objectId: params['id']}
+                    }
+                    _this._data.photosRepository.add(photoData, userId)
+                    .then(
+                        function(data){
+                            Noty.success('Photo successfully added.');
+                            redirectTo('#/categories/' + userId);
+                        },
+                        function(data){
+                            Noty.error('Error adding photo.');
+                        })
+                }, 
+                function(erorr) {
+                    Noty.error('Error uploading file.');
+                })      
+        }
+
+        PhotoController.prototype.delete = function(id) {
+            var userId = this._data.users.getUserData().userId;
+            this._data.photosRepository.delete(id)
+                .then(function(data) {
+                    redirectTo('#/categories/' + userId);
+                }, 
+                function(erorr) {
+                    Noty.error('Error deleting album.');
+                })
+        }
+
+        return PhotoController;
+    })();
 
     return {
         getControllers: function (data) {
             return {
                 categoryController: new CategoryController(data),
                 logController: new LogController(data),
-                albumController: new AlbumController(data)
+                albumController: new AlbumController(data),
+                photoController: new PhotoController(data)
                 // add new controllers here
             }
         }

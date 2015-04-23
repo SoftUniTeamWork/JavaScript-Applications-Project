@@ -7,6 +7,8 @@ app.data = (function () {
         this.posts = new Posts(baseUrl, ajaxRequester);
         this.categoriesRepository = new CategoriesRepository(baseUrl, ajaxRequester);
         this.albumsRepository = new AlbumsRepository(baseUrl, ajaxRequester);
+        this.photosRepository = new PhotosRepository(baseUrl, ajaxRequester);
+        this.filesRepository = new FilesRepository(baseUrl, ajaxRequester);
     }
 
     var credentials = (function () {
@@ -238,6 +240,58 @@ app.data = (function () {
         }
 
         return AlbumsRepository;
+    })();
+
+    // Photos repository
+
+    var PhotosRepository = (function() {
+        var PHOTOS_URL = 'classes/Photo';
+
+        function PhotosRepository(baseUrl, ajaxRequester) {
+            this._serviceUrl = baseUrl + PHOTOS_URL;
+            this._ajaxRequester = ajaxRequester;
+        }
+
+        PhotosRepository.prototype.add = function(photoData, objectOwnerId) {
+            photoData.ACL = { };
+            photoData.ACL[objectOwnerId] = {"write": true, "read": true};
+            photoData.ACL['*'] = {"read": true};
+            var headers = credentials.getHeaders();
+            headers['Content-Type'] = 'application/json';
+            return this._ajaxRequester.post(this._serviceUrl, photoData, headers);
+        }
+
+        PhotosRepository.prototype.getPhotosByAlbumId = function(id) { 
+            return this._ajaxRequester.get(this._serviceUrl + '?where={"albumId":{"__type": "Pointer","className": "Album","objectId": "' + id + '"}}&include=albumId',
+                credentials.getHeaders());
+        }
+
+        PhotosRepository.prototype.getById = function(id) {
+            return this._ajaxRequester.get(this._serviceUrl + '/' + id, credentials.getHeaders());
+        }
+
+        PhotosRepository.prototype.delete = function(id) {
+            return this._ajaxRequester.delete(this._serviceUrl + '/' + id, credentials.getHeaders());
+        }
+
+        return PhotosRepository;
+    })();
+
+    var FilesRepository = (function() {
+        var FILE_URL = 'files/';
+
+        function FilesRepository(baseUrl, ajaxRequester) {
+            this._serviceUrl = baseUrl + FILE_URL;
+            this._ajaxRequester = ajaxRequester;
+        }
+
+        FilesRepository.prototype.upload = function(file) {
+            var headers = credentials.getHeaders();
+            headers['Content-Type'] = file.type;
+            return this._ajaxRequester.post(this._serviceUrl + file.name, file, headers, false, false);
+        }
+
+        return FilesRepository;
     })();
 
     return {

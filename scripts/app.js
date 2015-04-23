@@ -62,6 +62,7 @@ var app = app || {};
         this.get('#/categories/delete/:id', function () {
             controllers.categoryController.delete(this.params['id']);
         });
+
         //user control
         this.get('#/login', function () {
             controllers.logController.loadLogin(mainSelector);
@@ -76,9 +77,7 @@ var app = app || {};
         this.get('#/logout', function () {
             controllers.logController.logout(mainSelector);
             //console.log(data.users);
-
         });
-
 
         // Album routes
         this.get('#/albums/new', function () {
@@ -105,7 +104,22 @@ var app = app || {};
             controllers.albumController.showAlbumsFromCategory(this.params['categoryId'], mainSelector);
         });
 
+        // Photos routes
+        this.get('#/photos/new/:id', function () {
+            controllers.photoController.new(this.params['id'], mainSelector);
+        });
 
+        this.post('#/photos/create/:id', function () {
+            controllers.photoController.create(this.params);
+        });
+
+        this.get('#/photos/showalbum/:albumId', function () {
+            controllers.photoController.showPhotosFromAlbum(this.params['albumId'], mainSelector);
+        });
+
+        this.get('#/photos/delete/:id', function () {
+            controllers.photoController.delete(this.params['id']);
+        });
     });
 
     app.router.run('#/');
