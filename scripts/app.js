@@ -39,16 +39,16 @@ var app = app || {};
         // New routes
 
         // Category routes
-        this.get('#/categories', function () {
-            controllers.categoryController.showAll(mainSelector);
-        });
-
         this.get('#/categories/new', function () {
             controllers.categoryController.new(mainSelector);
         });
 
         this.post('#/categories/create', function () {
             controllers.categoryController.create(this.params);
+        });
+
+        this.get('#/categories/:id', function () {
+            controllers.categoryController.showCategories(this.params['id'], mainSelector);
         });
 
         this.get('#/categories/edit/:id', function () {
@@ -61,7 +61,6 @@ var app = app || {};
 
         this.get('#/categories/delete/:id', function () {
             controllers.categoryController.delete(this.params['id']);
-            console.log(this.params);
         });
         //user control
         this.get('#/login', function () {

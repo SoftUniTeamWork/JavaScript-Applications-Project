@@ -177,14 +177,15 @@ app.data = (function () {
         }
 
         CategoriesRepository.prototype.add = function(category, objectOwnerId) {
-            // category.ACL = { };
-            // category.ACL[objectOwnerId] = {"write": true, "read": true};
-            // category.ACL['*'] = {"read": true};
+            category.ACL = { };
+            category.ACL[objectOwnerId] = {"write": true, "read": true};
+            category.ACL['*'] = {"read": true};
             return this._ajaxRequester.post(this._serviceUrl, category, credentials.getHeaders());
         }
 
-        CategoriesRepository.prototype.getAll = function() {
-            return this._ajaxRequester.get(this._serviceUrl, credentials.getHeaders());
+        CategoriesRepository.prototype.getCategoriesByUserId = function(id) {
+            return this._ajaxRequester.get(this._serviceUrl + '?where={"userId":{"__type": "Pointer","className": "_User","objectId": "' + id + '"}}'
+                , credentials.getHeaders());
         }
 
         CategoriesRepository.prototype.getById = function(id) {
@@ -213,14 +214,14 @@ app.data = (function () {
         }
 
         AlbumsRepository.prototype.add = function(album, objectOwnerId) {
-            // album.ACL = { };
-            // album.ACL[objectOwnerId] = {"write": true, "read": true};
-            // album.ACL['*'] = {"read": true};
+            album.ACL = { };
+            album.ACL[objectOwnerId] = {"write": true, "read": true};
+            album.ACL['*'] = {"read": true};
             return this._ajaxRequester.post(this._serviceUrl, album, credentials.getHeaders());
         }
 
-        AlbumsRepository.prototype.getAlbumsByCategoryId = function(id) { // get by category id
-            return this._ajaxRequester.get(this._serviceUrl + '?where={"categoryId":{"__type": "Pointer","className": "Category","objectId": "' + id + '"}}',
+        AlbumsRepository.prototype.getAlbumsByCategoryId = function(id) { 
+            return this._ajaxRequester.get(this._serviceUrl + '?where={"categoryId":{"__type": "Pointer","className": "Category","objectId": "' + id + '"}}&include=categoryId',
                 credentials.getHeaders());
         }
 

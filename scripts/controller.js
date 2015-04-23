@@ -306,8 +306,8 @@ app.controller = (function () {
             
         }
 
-        CategoryController.prototype.showAll = function(selector) {
-            this._data.categoriesRepository.getAll()
+        CategoryController.prototype.showCategories = function(userId, selector) {
+            this._data.categoriesRepository.getCategoriesByUserId(userId)
                 .then(
                 function(data) {
                     $.get('./views/category/all-categories.html', function (view) {
@@ -326,19 +326,16 @@ app.controller = (function () {
         }
 
         CategoryController.prototype.create = function(params) {
+            var userId = this._data.users.getUserData().userId;
             var categoryData = {
-                    name: params['category-name']
-                    // createdBy: {
-                    //     __type: "Pointer",
-                    //     className: "_User",
-                    //     objectId: userId
-                    // }
+                    name: params['category-name'],
+                    userId: {__type: 'Pointer', className: '_User', objectId: userId}
                 };
-        
-            this._data.categoriesRepository.add(categoryData)  // , userId
+            
+            this._data.categoriesRepository.add(categoryData, userId) 
                 .then(
                 function(data) {
-                    redirectTo('#/categories');
+                    redirectTo('#/categories/' + userId);
                     Noty.success('Category successfully added.');
                 }, 
                 function(erorr) {
@@ -360,13 +357,14 @@ app.controller = (function () {
         }
 
         CategoryController.prototype.update = function(params) {
+            var userId = this._data.users.getUserData().userId;
             categoryData = {
                 name: params['category-name']
             }
 
             this._data.categoriesRepository.updateCategory(params['id'], categoryData)
                 .then(function(data) {
-                    redirectTo('#/categories');
+                    redirectTo('#/categories/' + userId);
                 }, 
                 function(erorr) {
                     Noty.error('Error updating category.');
@@ -374,9 +372,10 @@ app.controller = (function () {
         }
 
         CategoryController.prototype.delete = function(id) {
+            var userId = this._data.users.getUserData().userId;
             this._data.categoriesRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/categories');
+                    redirectTo('#/categories/' + userId);
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting category.');
@@ -428,7 +427,8 @@ app.controller = (function () {
         }
 
         AlbumController.prototype.new = function(selector) {
-            this._data.categoriesRepository.getAll()
+            var userId = this._data.users.getUserData().userId;
+            this._data.categoriesRepository.getCategoriesByUserId(userId)
                 .then(function(data) {
                     $.get('./views/album/new-album.html', function (view) {
                             output = Mustache.render(view, data);
@@ -438,24 +438,19 @@ app.controller = (function () {
                 function(erorr) {
                     Noty.error('Error getting categories list.');
                 })
-           // $(selector).load('./views/album/new-album.html');
         }
 
         AlbumController.prototype.create = function(params) {
+            var userId = this._data.users.getUserData().userId;
             var albumData = {
                     name: params['album-name'],
                     categoryId: {__type: 'Pointer', className: 'Category', objectId: params['category-id']}
-                    // createdBy: {
-                    //     __type: "Pointer",
-                    //     className: "_User",
-                    //     objectId: userId
-                    // }
                 };
         
-            this._data.albumsRepository.add(albumData)  // , userId, categoryId
+            this._data.albumsRepository.add(albumData, userId) 
                 .then(
                 function(data) {
-                    redirectTo('#/categories');
+                    redirectTo('#/categories/' + userId);
                     Noty.success('Album successfully added.');
                 }, 
                 function(erorr) {
@@ -477,13 +472,14 @@ app.controller = (function () {
         }
 
         AlbumController.prototype.update = function(params) {
-            albumData = {
+            var userId = this._data.users.getUserData().userId;
+            var albumData = {
                 name: params['album-name']
             }
 
             this._data.albumsRepository.updateAlbum(params['id'], albumData)
                 .then(function(data) {
-                    redirectTo('#/categories');
+                    redirectTo('#/categories/' + userId);
                 }, 
                 function(erorr) {
                     Noty.error('Error updating album.');
@@ -491,9 +487,10 @@ app.controller = (function () {
         }
 
         AlbumController.prototype.delete = function(id) {
+            var userId = this._data.users.getUserData().userId;
             this._data.albumsRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/categories');
+                    redirectTo('#/categories/' + userId);
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting album.');
