@@ -507,8 +507,19 @@ app.controller = (function () {
             this._data = data;
         }
 
-        PhotoController.prototype.showPhoto = function(selector) {
-            
+        PhotoController.prototype.showPhoto = function(id, selector) {
+            this._data.photosRepository.getById(id)
+                .then(
+                function(data){
+                    $.get('./views/photo/show-photo.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).prepend(output);
+                        });
+                },
+                function(error){
+                    Noty.error("Error loading photo.")
+                }
+            );
         }
 
         PhotoController.prototype.showPhotosFromAlbum = function(id, selector) {
@@ -558,7 +569,7 @@ app.controller = (function () {
                     .then(
                         function(data){
                             Noty.success('Photo successfully added.');
-                            redirectTo('#/categories/' + userId);
+                            redirectTo('#/categories/showall/' + userId);
                         },
                         function(data){
                             Noty.error('Error adding photo.');
@@ -573,7 +584,7 @@ app.controller = (function () {
             var userId = this._data.users.getUserData().userId;
             this._data.photosRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/categories/' + userId);
+                    redirectTo('#/categories/showall/' + userId);
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting album.');
@@ -581,6 +592,62 @@ app.controller = (function () {
         }
 
         return PhotoController;
+    })();
+
+    // Comment Controller
+    // Will be moved to separate script with require.js
+
+    var CommentController = (function(){
+        function CommentController(data) {
+            this._data = data;
+        }
+
+        CommentController.prototype.showCommentsForPhoto = function(id, selector) {
+            this._data.commentsRepository.getCommentsByPhotoId(id)
+                .then(
+                function(data) {
+                    $.get('./views/comment/comments-for-photo.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).append(output);
+                        });
+                },
+                function(error) {
+                    Noty.error("Error loading comments.");
+                }
+            );
+        }
+
+        CommentController.prototype.create = function(params) {
+            var userId = this._data.users.getUserData().userId;
+            var commentData = {
+                    content: params['content'],
+                    photoId: {__type: 'Pointer', className: 'Photo', objectId: params['id']},
+                    userId: {__type: 'Pointer', className: '_User', objectId: userId}
+                };
+        
+            this._data.commentsRepository.add(commentData, userId) 
+                .then(
+                function(data) {
+                    redirectTo('#/categories/showall/' + userId);
+                    Noty.success('Comment successfully added.');
+                }, 
+                function(erorr) {
+                    Noty.error('Error creating comment.');
+                })   
+        }
+
+        CommentController.prototype.delete = function(id) {
+            var userId = this._data.users.getUserData().userId;
+            this._data.commentsRepository.delete(id)
+                .then(function(data) {
+                    redirectTo('#/categories/showall/' + userId);
+                }, 
+                function(erorr) {
+                    Noty.error('Error deleting comment.');
+                })
+        }
+
+        return CommentController;
     })();
 
     // Navigation Controller
@@ -616,7 +683,8 @@ app.controller = (function () {
                 logController: new LogController(data),
                 albumController: new AlbumController(data),
                 photoController: new PhotoController(data),
-                navigationController: new NavigationController(data)
+                navigationController: new NavigationController(data),
+                commentController: new CommentController(data)
                 // add new controllers here
             }
         }

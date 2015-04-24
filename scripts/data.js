@@ -9,6 +9,7 @@ app.data = (function () {
         this.albumsRepository = new AlbumsRepository(baseUrl, ajaxRequester);
         this.photosRepository = new PhotosRepository(baseUrl, ajaxRequester);
         this.filesRepository = new FilesRepository(baseUrl, ajaxRequester);
+        this.commentsRepository = new CommentsRepository(baseUrl, ajaxRequester);
     }
 
     var credentials = (function () {
@@ -274,6 +275,39 @@ app.data = (function () {
         }
 
         return PhotosRepository;
+    })();
+
+    // Comments repository
+
+    var CommentsRepository = (function() {
+        var COMMENTS_URL = 'classes/Comment';
+
+        function CommentsRepository(baseUrl, ajaxRequester) {
+            this._serviceUrl = baseUrl + COMMENTS_URL;
+            this._ajaxRequester = ajaxRequester;
+        }
+
+        CommentsRepository.prototype.add = function(commentData, objectOwnerId) {
+            commentData.ACL = { };
+            commentData.ACL[objectOwnerId] = {"write": true, "read": true};
+            commentData.ACL['*'] = {"read": true};
+            return this._ajaxRequester.post(this._serviceUrl, commentData, credentials.getHeaders());
+        }
+
+        CommentsRepository.prototype.getCommentsByPhotoId = function(id) { 
+            return this._ajaxRequester.get(this._serviceUrl + '?where={"photoId":{"__type": "Pointer","className": "Photo","objectId": "' + id + '"}}&include=userId',
+                credentials.getHeaders());
+        }
+
+        // CommentsRepository.prototype.getById = function(id) {
+        //     return this._ajaxRequester.get(this._serviceUrl + '/' + id, credentials.getHeaders());
+        // }
+
+        CommentsRepository.prototype.delete = function(id) {
+            return this._ajaxRequester.delete(this._serviceUrl + '/' + id, credentials.getHeaders());
+        }
+
+        return CommentsRepository;
     })();
 
     var FilesRepository = (function() {

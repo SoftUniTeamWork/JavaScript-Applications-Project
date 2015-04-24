@@ -8,11 +8,13 @@
 <h3>Photos: </h3>
 <ul id="photos-list">
     {{#results}}
-    <li class="album" data-id="{{objectId}}" data-name="{{name}}">
-        <div class="photo-info">
-            <p class="photo-name">{{name}}</p>
-            <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
-        </div>
+    <li class="album">
+        <a href="#/photos/show/{{objectId}}">    
+            <div class="photo-info">
+<!--                 <p class="photo-name">{{name}}</p> -->
+                <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
+            </div>
+        </a>
         <a href="#/photos/delete/{{objectId}}">
             <button class="delete-button">Delete</button>
         </a>

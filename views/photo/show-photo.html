@@ -1,0 +1,11 @@
+<div class="photo-info">
+    <p class="photo-name">{{name}}</p>
+    <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
+</div>
+<a href="#/photos/delete/{{objectId}}">
+    <button class="delete-button">Delete</button>
+</a>
+<form action="#/comments/create/{{objectId}}" method="POST">
+    <textarea name="content"></textarea>
+    <input type="submit"/>
+</form>

@@ -12,32 +12,6 @@ var app = app || {};
         var mainSelector = '#main',
             headerSelector = '#header';
 
-        // this.get('#/', function (){
-        //     controller.loadHeader(headerSelector);
-        //     controller.loadHome(mainSelector);
-        // });
-
-        // this.get('#/login', function () {
-        //     controller.loadHeader(headerSelector);
-        //     controller.loadLogin(mainSelector);
-        // });
-
-        // this.get('#/register', function () {
-        //     controller.loadHeader(headerSelector);
-        //     controller.loadRegister(mainSelector);
-        // });
-
-        // this.get('#/profile/edit', function () {
-        //     controller.loadHeader(headerSelector);
-        //     controller.loadEditProfile(mainSelector);
-        // });
-
-        // this.get('#/logout', function () {
-        //     controller.logout();
-        // });
-
-        // New routes
-
         // Category routes
         this.get('#/categories/new', function () {
             controllers.navigationController.showProfileNavigation(headerSelector);
@@ -137,6 +111,24 @@ var app = app || {};
         this.get('#/photos/delete/:id', function () {
             controllers.navigationController.showProfileNavigation(headerSelector);
             controllers.photoController.delete(this.params['id']);
+        });
+
+        this.get('#/photos/show/:id', function () {
+            $(mainSelector).html('');
+            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.photoController.showPhoto(this.params['id'], mainSelector);
+            controllers.commentController.showCommentsForPhoto(this.params['id'], mainSelector)
+        });
+
+        // Comments routes
+        this.post('#/comments/create/:id', function () {
+            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.commentController.create(this.params);
+        });
+
+        this.get('#/comments/delete/:id', function () {
+            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.commentController.delete(this.params['id']);
         });
     });
 
