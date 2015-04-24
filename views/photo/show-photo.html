@@ -1,3 +1,4 @@
+{{#photo}}
 <div class="photo-info">
     <p class="photo-name">{{name}}</p>
     <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
@@ -5,6 +6,21 @@
 <a href="#/photos/delete/{{objectId}}">
     <button class="delete-button">Delete</button>
 </a>
+{{/photo}}
+<div class="likes-info">
+    <span>Likes: {{#likes}}{{likes}}{{/likes}}</span>
+    {{#likes}}
+        {{#likedPhoto}}
+            {{#liked}}
+            <a href="#/likes/delete/{{likeId}}">Dislike this photo</a>
+            {{/liked}}
+
+            {{^liked}}
+            <a href="#/likes/create/{{#photo}}{{objectId}}{{/photo}}">Like this photo</a>
+            {{/liked}}
+        {{/likedPhoto}}
+    {{/likes}}
+</div>
 <form action="#/comments/create/{{objectId}}" method="POST">
     <textarea name="content"></textarea>
     <input type="submit"/>

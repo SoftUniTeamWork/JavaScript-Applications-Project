@@ -508,18 +508,33 @@ app.controller = (function () {
         }
 
         PhotoController.prototype.showPhoto = function(id, selector) {
+            var userId = this._data.users.getUserData().userId,
+                photoData = {},
+                _this = this;
+
             this._data.photosRepository.getById(id)
                 .then(
                 function(data){
-                    $.get('./views/photo/show-photo.html', function (view) {
-                            output = Mustache.render(view, data);
-                            $(selector).prepend(output);
-                        });
+                    photoData['photo'] = data;
                 },
                 function(error){
                     Noty.error("Error loading photo.")
                 }
-            );
+                ).then(
+                function(){
+                    _this._data.functionsRepository.execute('likesCount', {photoId: id, userId: userId})
+                        .then(
+                            function(d){
+                                photoData['likes'] = d['result'];
+                                $.get('./views/photo/show-photo.html', function (view) {
+                                    output = Mustache.render(view, photoData);
+                                    $(selector).prepend(output);
+                                });
+                            }, 
+                            function(error){
+                                console.log(error);
+                            });
+                });
         }
 
         PhotoController.prototype.showPhotosFromAlbum = function(id, selector) {
@@ -650,6 +665,45 @@ app.controller = (function () {
         return CommentController;
     })();
 
+    // Likes controller
+
+    var LikeController = (function(){
+        function LikeController(data) {
+            this._data = data;
+        }
+
+        LikeController.prototype.create = function(id) {
+            var userId = this._data.users.getUserData().userId;
+            var likeData = {
+                    photoId: {__type: 'Pointer', className: 'Photo', objectId: id},
+                    userId: {__type: 'Pointer', className: '_User', objectId: userId}
+                };
+        
+            this._data.likesRepository.add(likeData, userId) 
+                .then(
+                function(data) {
+                    redirectTo('#/categories/showall/' + userId);
+                    Noty.success('Like successfully added.');
+                }, 
+                function(erorr) {
+                    Noty.error('Error creating like.');
+                })   
+        }
+
+        LikeController.prototype.delete = function(id) {
+            var userId = this._data.users.getUserData().userId;
+            this._data.likesRepository.delete(id)
+                .then(function(data) {
+                    redirectTo('#/categories/showall/' + userId);
+                }, 
+                function(erorr) {
+                    Noty.error('Error deleting like.');
+                })
+        }
+
+        return LikeController;
+    })();
+
     // Navigation Controller
     // Will be moved to separate script with require.js
 
@@ -684,7 +738,8 @@ app.controller = (function () {
                 albumController: new AlbumController(data),
                 photoController: new PhotoController(data),
                 navigationController: new NavigationController(data),
-                commentController: new CommentController(data)
+                commentController: new CommentController(data),
+                likeController: new LikeController(data)
                 // add new controllers here
             }
         }

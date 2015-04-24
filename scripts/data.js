@@ -10,6 +10,8 @@ app.data = (function () {
         this.photosRepository = new PhotosRepository(baseUrl, ajaxRequester);
         this.filesRepository = new FilesRepository(baseUrl, ajaxRequester);
         this.commentsRepository = new CommentsRepository(baseUrl, ajaxRequester);
+        this.functionsRepository = new FunctionsRepository(baseUrl, ajaxRequester);
+        this.likesRepository = new LikesRepository(baseUrl, ajaxRequester);
     }
 
     var credentials = (function () {
@@ -327,10 +329,46 @@ app.data = (function () {
         return FilesRepository;
     })();
 
+    var FunctionsRepository = (function() {
+        var FUNCTION_URL = 'functions/';
+
+        function FunctionsRepository(baseUrl, ajaxRequester) {
+            this._serviceUrl = baseUrl + FUNCTION_URL;
+            this._ajaxRequester = ajaxRequester;
+        }
+
+        FunctionsRepository.prototype.execute = function(name, data) {
+            return this._ajaxRequester.post(this._serviceUrl + name, data, credentials.getHeaders());
+        }
+
+        return FunctionsRepository;
+    })();
+
+    var LikesRepository = (function() {
+        var LIKES_URL = 'classes/Like';
+
+        function LikesRepository(baseUrl, ajaxRequester) {
+            this._serviceUrl = baseUrl + LIKES_URL;
+            this._ajaxRequester = ajaxRequester;
+        }
+
+        LikesRepository.prototype.add = function(likeData, objectOwnerId) {
+            likeData.ACL = { };
+            likeData.ACL[objectOwnerId] = {"write": true, "read": true};
+            likeData.ACL['*'] = {"read": true};
+            return this._ajaxRequester.post(this._serviceUrl, likeData, credentials.getHeaders());
+        }
+
+        LikesRepository.prototype.delete = function(id) {
+            return this._ajaxRequester.delete(this._serviceUrl + '/' + id, credentials.getHeaders());
+        }
+
+        return LikesRepository;
+    })();
+
     return {
         get: function (baseUrl, ajaxRequester) {
             return new Data(baseUrl, ajaxRequester);
-            //return new Users(baseUrl, ajaxRequester);
         }
     }
 }());

@@ -130,6 +130,17 @@ var app = app || {};
             controllers.navigationController.showProfileNavigation(headerSelector);
             controllers.commentController.delete(this.params['id']);
         });
+
+        // Likes routes
+        this.get('#/likes/create/:id', function () {
+            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.likeController.create(this.params['id']);
+        });
+
+        this.get('#/likes/delete/:id', function () {
+            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.likeController.delete(this.params['id']);
+        });
     });
 
     app.router.run('#/login');

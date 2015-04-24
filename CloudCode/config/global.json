@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "Photo-Album": {
+            "applicationId": "Jzz7mwlDky5ROWzs4fgY74ZuEAACu6jDyE0jVZks", 
+            "masterKey": "RpyseIsPZHVCj0ZHjbUsQAJEf2O7XwV9wh73LAfB"
+        }, 
+        "_default": {
+            "link": "Photo-Album"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.4.2"
+    }
+}
