@@ -507,6 +507,10 @@ app.controller = (function () {
             this._data = data;
         }
 
+        var PHOTOS_PER_PAGE = 5,
+            PHOTO_MAX_SIZE = 5242880,
+            ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png'];
+
         PhotoController.prototype.showPhoto = function(id, selector) {
             var userId = this._data.users.getUserData().userId,
                 photoData = {},
@@ -538,8 +542,7 @@ app.controller = (function () {
         }
 
         PhotoController.prototype.showPhotosFromAlbum = function(id, page, selector) {
-            var PHOTOS_PER_PAGE = 5,
-                page = parseInt(page),
+                var page = parseInt(page),
                 nextPage = page + 1,
                 prevPage = page - 1 < 1 ? 1 : page - 1;
 
@@ -575,7 +578,17 @@ app.controller = (function () {
             var _this = this,
                 userId = this._data.users.getUserData().userId,
                 picInput = document.getElementById('photoInput'),
-                picture = picInput.files[0]; 
+                picture = picInput.files[0],
+                size = picture.size || picture.fileSize,
+                mime = picture.type || picture.mimeType; 
+
+                if(picture.size > PHOTO_MAX_SIZE) {
+                    Noty.error('Photo size is too large');
+                    return;
+                } else if($.inArray(mime, ALLOWED_PHOTO_TYPES) < 0) {
+                    Noty.error('File is not in correct format');
+                    return;
+                }
 
             this._data.filesRepository.upload(picture)
             .then(
