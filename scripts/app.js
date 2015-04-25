@@ -103,9 +103,9 @@ var app = app || {};
             controllers.photoController.create(this.params);
         });
 
-        this.get('#/photos/showalbum/:albumId', function () {
+        this.get('#/photos/showalbum/:albumId/:page', function () {
             controllers.navigationController.showProfileNavigation(headerSelector);
-            controllers.photoController.showPhotosFromAlbum(this.params['albumId'], mainSelector);
+            controllers.photoController.showPhotosFromAlbum(this.params['albumId'], this.params['page'], mainSelector);
         });
 
         this.get('#/photos/delete/:id', function () {

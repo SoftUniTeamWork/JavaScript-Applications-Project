@@ -263,8 +263,9 @@ app.data = (function () {
             return this._ajaxRequester.post(this._serviceUrl, photoData, headers);
         }
 
-        PhotosRepository.prototype.getPhotosByAlbumId = function(id) { 
-            return this._ajaxRequester.get(this._serviceUrl + '?where={"albumId":{"__type": "Pointer","className": "Album","objectId": "' + id + '"}}&include=albumId',
+        PhotosRepository.prototype.getPhotosByAlbumId = function(id, photosPerPage, page) {
+            var skip = (page - 1) * photosPerPage;
+            return this._ajaxRequester.get(this._serviceUrl + '?where={"albumId":{"__type": "Pointer","className": "Album","objectId": "' + id + '"}}&include=albumId&skip=' + skip + '&limit=' + photosPerPage,
                 credentials.getHeaders());
         }
 

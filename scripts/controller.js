@@ -537,10 +537,19 @@ app.controller = (function () {
                 });
         }
 
-        PhotoController.prototype.showPhotosFromAlbum = function(id, selector) {
-            this._data.photosRepository.getPhotosByAlbumId(id)
+        PhotoController.prototype.showPhotosFromAlbum = function(id, page, selector) {
+            var PHOTOS_PER_PAGE = 5,
+                page = parseInt(page),
+                nextPage = page + 1,
+                prevPage = page - 1 < 1 ? 1 : page - 1;
+
+            this._data.photosRepository.getPhotosByAlbumId(id, PHOTOS_PER_PAGE, page)
                 .then(
                 function(data) {
+                    if(data['results'].length === 0) {
+                        redirectTo('#/photos/showalbum/' + id + '/' + (page - 1));
+                    }
+                    data['pageInfo'] = {nextPage: nextPage, prevPage: prevPage};
                     $.get('./views/photo/photos-from-album.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);

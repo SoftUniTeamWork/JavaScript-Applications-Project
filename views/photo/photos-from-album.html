@@ -11,7 +11,6 @@
     <li class="album">
         <a href="#/photos/show/{{objectId}}">    
             <div class="photo-info">
-<!--                 <p class="photo-name">{{name}}</p> -->
                 <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
             </div>
         </a>
@@ -21,3 +20,7 @@
     </li>
     {{/results}}
 </ul>
+{{#pageInfo}}
+    <a href="#/photos/showalbum/{{#results.0}}{{#albumId}}{{objectId}}{{/albumId}}{{/results.0}}/{{prevPage}}}">prev</a>
+    <a href="#/photos/showalbum/{{#results.0}}{{#albumId}}{{objectId}}{{/albumId}}{{/results.0}}/{{nextPage}}}">next</a>
+{{/pageInfo}}
