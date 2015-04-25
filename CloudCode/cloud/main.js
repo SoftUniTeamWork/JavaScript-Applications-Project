@@ -29,3 +29,63 @@ Parse.Cloud.define("likesCount", function(request, response) {
     }
   });
 });
+
+Parse.Cloud.define('getMostLikedUserPhotos', function(request, response) {
+  var userId = request.params['userId'];
+
+  var Category = Parse.Object.extend('Category');
+  var categoryQuery = new Parse.Query(Category);
+  categoryQuery.equalTo('userId', {"__type": "Pointer","className": "_User","objectId": userId});
+
+  var Album = Parse.Object.extend('Album');
+  var albumQuery = new Parse.Query(Album);
+  albumQuery.matchesQuery('categoryId', categoryQuery);
+
+  var Photo = Parse.Object.extend('Photo');
+  var photoQuery = new Parse.Query(Photo);
+  photoQuery.matchesQuery('albumId', albumQuery);
+  photoQuery.descending('likes');
+  photoQuery.limit(5);
+
+  photoQuery.find({
+    success: function(results) {
+      response.success(results);
+    },
+    error: function() {
+      response.error('photos lookup failed');
+    }
+  });
+});
+
+Parse.Cloud.define('getMostLikedPhotos', function(request, response) {
+  var Photo = Parse.Object.extend('Photo');
+  var photoQuery = new Parse.Query(Photo);
+  photoQuery.descending('likes');
+  photoQuery.limit(5);
+
+  photoQuery.find({
+    success: function(results) {
+      response.success(results);
+    },
+    error: function() {
+      response.error('photos lookup failed');
+    }
+  });
+});
+
+Parse.Cloud.afterSave('Like', function(request) {
+  var photoId = request.object.get('photoId').id;
+
+  query = new Parse.Query("Photo");
+  query.get(photoId, {
+    success: function(photo) {
+      photo.increment("likes");
+      photo.save();
+    },
+    error: function(error) {
+      console.error("Got an error " + error.code + " : " + error.message);
+    }
+  });
+});
+
+

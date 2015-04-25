@@ -1,0 +1,9 @@
+<ul class="user-list">
+    {{#results}}
+        <li><a href="#/users/{{objectId}}">{{username}}</a></li>
+    {{/results}}
+</ul>
+{{#pageInfo}}
+    <a href="#/users/showall/{{prevPage}}">prev</a>
+    <a href="#/users/showall/{{nextPage}}">next</a>
+{{/pageInfo}}

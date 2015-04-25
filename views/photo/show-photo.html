@@ -24,7 +24,7 @@
         {{/likedPhoto}}
     {{/likes}}
 </div>
-<form action="#/comments/create/{{objectId}}" method="POST">
+<form action="#/comments/create/{{#photo}}{{objectId}}{{/photo}}" method="POST">
     <textarea name="content"></textarea>
     <input type="submit"/>
 </form>

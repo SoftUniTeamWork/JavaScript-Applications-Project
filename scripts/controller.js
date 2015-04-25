@@ -268,30 +268,115 @@ app.controller = (function () {
         window.location = url;
     }
 
-    function LogController(data){
-        this._data = data
-    }
+    var LogController = (function() {
+        function LogController(data){
+            this._data = data
+        }
 
-    LogController.prototype.loadRegister = function (selector) {
-        var data = this._data;
-        $(selector).load('./views/log/register.html',function(){
-            attachRegisterHandler(selector,data)
-        });
-    }
+        LogController.prototype.loadRegister = function (selector) {
+            var data = this._data;
+            $(selector).load('./views/log/register.html',function(){
+                attachRegisterHandler(selector,data)
+            });
+        }
 
-    LogController.prototype.loadLogin = function (selector) {
-        var data = this._data
-        $(selector).load('./views/log/login.html', function(){
-            attachLoginHandler(selector,data);
-        });
-    }
+        LogController.prototype.loadLogin = function (selector) {
+            var data = this._data
+            $(selector).load('./views/log/login.html', function(){
+                attachLoginHandler(selector,data);
+            });
+        }
 
-    LogController.prototype.logout = function (selector) {
-        //console.log(this._data)
-        this._data.users.logout();
-        Noty.success("Successfully logged out.");
-        redirectTo('#/login');
-    }
+        LogController.prototype.logout = function (selector) {
+            this._data.users.logout();
+            Noty.success("Successfully logged out.");
+            redirectTo('#/login');
+        }
+
+        return LogController;
+    })();
+
+    // Users controller
+
+    var UserController = (function() {
+        var USERS_PER_PAGE = 10;
+
+        function UserController(data) {
+            this._data = data;
+        }
+
+        UserController.prototype.showAllUsers = function(page, selector) {
+            var page = parseInt(page),
+                nextPage = page + 1,
+                prevPage = page - 1 < 1 ? 1 : page - 1;
+
+            this._data.users.getAll(USERS_PER_PAGE, page)
+               .then(
+                function(data) {
+                    if(data['results'].length === 0 && page > 1) {
+                        redirectTo('#/users/showall/' + id + '/' + (page - 1));
+                    }
+                    data['pageInfo'] = {nextPage: nextPage, prevPage: prevPage};
+
+                    $.get('./views/user/user-all.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).html(output);
+                        });
+                },
+                function(error) {
+                    Noty.error("Error loading users data.");
+                }
+            );
+        }
+
+        UserController.prototype.showProfile = function(userId, selector) {
+            this._data.users.getById(userId)
+                .then(
+                function(data) {
+                    $.get('./views/user/user-profile.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).html(output);
+                        });
+                },
+                function(error) {
+                    Noty.error("Error loading user data.");
+                }
+            );
+        }
+
+        UserController.prototype.showTopPhotosOfUser = function(userId, selector) {
+            var sendData = {userId: userId};
+            this._data.functionsRepository.execute('getMostLikedUserPhotos', sendData)
+                .then(
+                function(data) {
+                    $.get('./views/user/user-home-top-photos.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).prepend(output);
+                        });
+                },
+                function(error) {
+                    Noty.error("Error loading user's most liked photos.");
+                }
+            );
+        }
+
+        UserController.prototype.showTopPhotosOfAllUsers = function(selector) {
+            this._data.functionsRepository.execute('getMostLikedPhotos')
+                .then(
+                function(data) {
+                    $.get('./views/user/user-home-top-photos-all.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).append(output);
+                        });
+                },
+                function(error) {
+                    Noty.error("Error loading most liked photos.");
+                }
+            );
+        }
+
+        return UserController;
+    })();
 
     // Category Controller
     // Will be moved to separate script with require.js
@@ -299,10 +384,6 @@ app.controller = (function () {
     var CategoryController = (function(){
         function CategoryController(data) {
             this._data = data;
-        }
-
-        CategoryController.prototype.showCategory = function(selector) {
-            
         }
 
         CategoryController.prototype.showCategories = function(userId, selector) {
@@ -334,7 +415,7 @@ app.controller = (function () {
             this._data.categoriesRepository.add(categoryData, userId) 
                 .then(
                 function(data) {
-                    redirectTo('#/categories/' + userId);
+                    redirectTo('#/categories/showall/' + userId);
                     Noty.success('Category successfully added.');
                 }, 
                 function(erorr) {
@@ -363,7 +444,7 @@ app.controller = (function () {
 
             this._data.categoriesRepository.updateCategory(params['id'], categoryData)
                 .then(function(data) {
-                    redirectTo('#/categories/' + userId);
+                    redirectTo('#/categories/showall/' + userId);
                 }, 
                 function(erorr) {
                     Noty.error('Error updating category.');
@@ -374,7 +455,7 @@ app.controller = (function () {
             var userId = this._data.users.getUserData().userId;
             this._data.categoriesRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/categories/' + userId);
+                    redirectTo('#/categories/showall/' + userId);
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting category.');
@@ -404,10 +485,6 @@ app.controller = (function () {
     var AlbumController = (function(){
         function AlbumController(data) {
             this._data = data;
-        }
-
-        AlbumController.prototype.showAlbum = function(selector) {
-            
         }
 
         AlbumController.prototype.showAlbumsFromCategory = function(id, selector) {
@@ -449,7 +526,7 @@ app.controller = (function () {
             this._data.albumsRepository.add(albumData, userId) 
                 .then(
                 function(data) {
-                    redirectTo('#/categories/' + userId);
+                    redirectTo('#/categories/showall/' + userId);
                     Noty.success('Album successfully added.');
                 }, 
                 function(erorr) {
@@ -478,7 +555,7 @@ app.controller = (function () {
 
             this._data.albumsRepository.updateAlbum(params['id'], albumData)
                 .then(function(data) {
-                    redirectTo('#/categories/' + userId);
+                    redirectTo('#/categories/showall/' + userId);
                 }, 
                 function(erorr) {
                     Noty.error('Error updating album.');
@@ -489,7 +566,7 @@ app.controller = (function () {
             var userId = this._data.users.getUserData().userId;
             this._data.albumsRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/categories/' + userId);
+                    redirectTo('#/categories/showall/' + userId);
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting album.');
@@ -508,8 +585,7 @@ app.controller = (function () {
         }
 
         var PHOTOS_PER_PAGE = 5,
-            PHOTO_MAX_SIZE = 5242880,
-            ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png'];
+            PHOTO_MAX_SIZE = 5242880;
 
         PhotoController.prototype.showPhoto = function(id, selector) {
             var userId = this._data.users.getUserData().userId,
@@ -549,7 +625,7 @@ app.controller = (function () {
             this._data.photosRepository.getPhotosByAlbumId(id, PHOTOS_PER_PAGE, page)
                 .then(
                 function(data) {
-                    if(data['results'].length === 0) {
+                    if(data['results'].length === 0 && page > 1) {
                         redirectTo('#/photos/showalbum/' + id + '/' + (page - 1));
                     }
                     data['pageInfo'] = {nextPage: nextPage, prevPage: prevPage};
@@ -585,7 +661,7 @@ app.controller = (function () {
                 if(picture.size > PHOTO_MAX_SIZE) {
                     Noty.error('Photo size is too large');
                     return;
-                } else if($.inArray(mime, ALLOWED_PHOTO_TYPES) < 0) {
+                } else if(!mime.match(/image\/.*/)) {
                     Noty.error('File is not in correct format');
                     return;
                 }
@@ -761,7 +837,8 @@ app.controller = (function () {
                 photoController: new PhotoController(data),
                 navigationController: new NavigationController(data),
                 commentController: new CommentController(data),
-                likeController: new LikeController(data)
+                likeController: new LikeController(data),
+                userController: new UserController(data)
                 // add new controllers here
             }
         }

@@ -4,7 +4,6 @@ app.data = (function () {
 
     function Data (baseUrl, ajaxRequester) {
         this.users = new Users(baseUrl, ajaxRequester);
-        this.posts = new Posts(baseUrl, ajaxRequester);
         this.categoriesRepository = new CategoriesRepository(baseUrl, ajaxRequester);
         this.albumsRepository = new AlbumsRepository(baseUrl, ajaxRequester);
         this.photosRepository = new PhotosRepository(baseUrl, ajaxRequester);
@@ -72,6 +71,8 @@ app.data = (function () {
     }());
 
     var Users = (function (argument) {
+        var USERS_URL = 'users';
+
         function Users(baseUrl, ajaxRequester) {
             this._serviceUrl = baseUrl;
             this._ajaxRequester = ajaxRequester;
@@ -110,7 +111,12 @@ app.data = (function () {
 
         Users.prototype.getById = function (userId) {
             var url = this._serviceUrl + 'users/' + userId;
+            return this._ajaxRequester.get(url, credentials.getHeaders());
+        }
 
+        Users.prototype.getAll = function(usersPerPage, page) {
+            var skip = (page - 1) * usersPerPage;
+            var url = this._serviceUrl + '/users' + '?skip=' + skip + '&limit=' + usersPerPage;
             return this._ajaxRequester.get(url, credentials.getHeaders());
         }
 
@@ -138,37 +144,37 @@ app.data = (function () {
         return Users;
     }());
 
-    var Posts = (function () {
-        var POSTS_URL = 'classes/Post';
+    // var Posts = (function () {
+    //     var POSTS_URL = 'classes/Post';
 
-        function Posts(baseUrl, ajaxRequester) {
-            this._serviceUrl = baseUrl + POSTS_URL;
-            this._ajaxRequester = ajaxRequester;
-        }
+    //     function Posts(baseUrl, ajaxRequester) {
+    //         this._serviceUrl = baseUrl + POSTS_URL;
+    //         this._ajaxRequester = ajaxRequester;
+    //     }
 
-        Posts.prototype.getAll = function () {
-            var url = this._serviceUrl + "?include=createdBy";
-            return this._ajaxRequester.get(url, credentials.getHeaders());
-        }
+    //     Posts.prototype.getAll = function () {
+    //         var url = this._serviceUrl + "?include=createdBy";
+    //         return this._ajaxRequester.get(url, credentials.getHeaders());
+    //     }
 
-        Posts.prototype.getById = function (objectId) {
-            return this._ajaxRequester.get(this._serviceUrl + '/' + objectId, credentials.getHeaders());
-        }
+    //     Posts.prototype.getById = function (objectId) {
+    //         return this._ajaxRequester.get(this._serviceUrl + '/' + objectId, credentials.getHeaders());
+    //     }
 
-        Posts.prototype.add = function (post, objectOwnerId) {
-            post.ACL = { };
-            post.ACL[objectOwnerId] = {"write": true, "read": true};
-            post.ACL['*'] = {"read": true};
-            return this._ajaxRequester.post(this._serviceUrl, post, credentials.getHeaders());
-        }
+    //     Posts.prototype.add = function (post, objectOwnerId) {
+    //         post.ACL = { };
+    //         post.ACL[objectOwnerId] = {"write": true, "read": true};
+    //         post.ACL['*'] = {"read": true};
+    //         return this._ajaxRequester.post(this._serviceUrl, post, credentials.getHeaders());
+    //     }
 
-        Posts.prototype.delete = function (objectId) {
-            var url = this._serviceUrl + '/' + objectId;
-            return this._ajaxRequester.delete(url, credentials.getHeaders());
-        }
+    //     Posts.prototype.delete = function (objectId) {
+    //         var url = this._serviceUrl + '/' + objectId;
+    //         return this._ajaxRequester.delete(url, credentials.getHeaders());
+    //     }
 
-        return Posts;
-    }());
+    //     return Posts;
+    // }());
     
     // Category repository
 
@@ -301,10 +307,6 @@ app.data = (function () {
             return this._ajaxRequester.get(this._serviceUrl + '?where={"photoId":{"__type": "Pointer","className": "Photo","objectId": "' + id + '"}}&include=userId',
                 credentials.getHeaders());
         }
-
-        // CommentsRepository.prototype.getById = function(id) {
-        //     return this._ajaxRequester.get(this._serviceUrl + '/' + id, credentials.getHeaders());
-        // }
 
         CommentsRepository.prototype.delete = function(id) {
             return this._ajaxRequester.delete(this._serviceUrl + '/' + id, credentials.getHeaders());

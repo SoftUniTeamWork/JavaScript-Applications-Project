@@ -58,7 +58,24 @@ var app = app || {};
         this.get('#/logout', function () {
             controllers.navigationController.showProfileNavigation(headerSelector);
             controllers.logController.logout(mainSelector);
-            //console.log(data.users);
+        });
+
+        //User routes
+        this.get('#/users/showall/:page', function () {
+            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.userController.showAllUsers(this.params['page'], mainSelector);
+        });
+
+        this.get('#/users/:id', function () {
+            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.userController.showProfile(this.params['id'], mainSelector);
+        });
+
+        this.get('#/users/home/:id', function () {
+            $(mainSelector).html('');
+            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.userController.showTopPhotosOfUser(this.params['id'], mainSelector);
+            controllers.userController.showTopPhotosOfAllUsers(mainSelector)
         });
 
         // Album routes
@@ -145,3 +162,8 @@ var app = app || {};
 
     app.router.run('#/login');
 }());
+
+
+// var a = {userId, userId};
+//             this._data.functionsRepository.execute('getMostLikedUserPhotos', a)
+//                 .then(function(data) {console.log(data);}, function(error) {console.log(error);});
