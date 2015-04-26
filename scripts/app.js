@@ -160,7 +160,7 @@ var app = app || {};
         });
     });
 
-    app.router.run('#/');
+    app.router.run('#/login');
 }());
 
 

@@ -146,7 +146,7 @@ app.data = (function () {
             var _credentials = credentials.getHeaders();
             var url = this._serviceUrl + 'logout';
             credentials.clearLocalStorage();
-            return this._ajaxRequester.post(url, null, _credentials.getHeaders());
+            return this._ajaxRequester.post(url, null, _credentials);
         }
 
         return Users;

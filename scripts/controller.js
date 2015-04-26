@@ -513,7 +513,7 @@ app.controller = (function () {
                 function(data) {
                     var albums = data['results'];
                     albums.forEach(function(album) {
-                        if(album['ACL'][userId] && photo['ACL'][userId]['write']) {
+                        if(album['ACL'][userId] && album['ACL'][userId]['write']) {
                             album['showButtons'] = true;
                         }
                     });
