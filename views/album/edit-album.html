@@ -2,8 +2,9 @@
     <h2>Edit album</h2>
     <form action="#/albums/update/{{objectId}}" method="PUT">
         <fieldset>
-            <input type="text" name="album-name" value="{{name}}">
-            <input type="submit"/>
+            <label for="album-name"></label>
+            <input type="text" name="album-name" id="album-name" value="{{name}}">
+            <input type="submit" value="Edit"/>
         </fieldset>
     </form>
 </div>
