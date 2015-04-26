@@ -93,10 +93,10 @@ app.data = (function () {
         Users.prototype.register = function (userRegData) {
             var url = this._serviceUrl + 'users';
 
-            return this._ajaxRequester.post(url, userRegData, credentials.getHeaders())
-                .then(function (data) {
-                    return data;
-                });
+            return this._ajaxRequester.post(url, userRegData, credentials.getHeaders());
+                // .then(function (data) {
+                //     return data;
+                // });
         }
 
         Users.prototype.editProfile = function (userId, userProfileData) {

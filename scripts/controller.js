@@ -248,7 +248,7 @@ app.controller = (function () {
             data.users.register(userRegData)
                 .then(function (data) {
                     Noty.success("Registration successful.");
-                    redirectTo('#/');
+                    redirectTo('#/login');
                 },
                 function (error) {
                     Noty.error("Your registration has encountered an error.");
