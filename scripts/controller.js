@@ -215,6 +215,7 @@ app.controller = (function () {
 
     var attachLoginHandler = function (selector,data) {
         var _data = data;
+        var _this = this;
 
         $(selector).on('click', '#login-btn', function () {
             var username = $('#login-username').val(),
@@ -222,8 +223,8 @@ app.controller = (function () {
 
             data.users.login(username, password)
                 .then(function (data) {
+                    Noty.success("Successfully logged in.");
                     redirectTo('#/users/home/' + _data.users.getUserData().userId);
-					Noty.success("Successfully logged in.");
                 },
                 function (error) {
                     Noty.error("Incorrect username/password.");
@@ -281,16 +282,22 @@ app.controller = (function () {
         }
 
         LogController.prototype.loadLogin = function (selector) {
-            var data = this._data
+            var data = this._data;
             $(selector).load('./views/log/login.html', function(){
                 attachLoginHandler(selector,data);
             });
         }
 
         LogController.prototype.logout = function (selector) {
-            this._data.users.logout();
-            Noty.success("Successfully logged out.");
-            redirectTo('#/login');
+            this._data.users.logout()
+            .then(
+                function(data){
+                    Noty.success("Successfully logged out.");
+                    redirectTo('#/login');
+                },
+                function(error){
+                    Noty.error("Error logging out.");
+                });
         }
 
         return LogController;
@@ -390,7 +397,6 @@ app.controller = (function () {
             this._data.categoriesRepository.getCategoriesByUserId(userId)
                 .then(
                 function(data) {
-                    console.log(data);
                     $.get('./views/category/all-categories.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);

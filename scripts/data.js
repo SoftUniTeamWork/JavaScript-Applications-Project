@@ -79,9 +79,8 @@ app.data = (function () {
         }
 
         Users.prototype.login = function (username, password) {
-
             var url = this._serviceUrl + 'login?username=' + username + '&password=' + password;
-            console.log(url);
+
             return this._ajaxRequester.get(url, credentials.getHeaders())
                 .then(function (data) {
                     credentials.setSessionToken(data.sessionToken);
@@ -138,7 +137,10 @@ app.data = (function () {
         }
 
         Users.prototype.logout = function() {
+            var _credentials = credentials.getHeaders();
+            var url = this._serviceUrl + 'logout';
             credentials.clearLocalStorage();
+            return this._ajaxRequester.post(url, null, _credentials);
         }
 
         return Users;
