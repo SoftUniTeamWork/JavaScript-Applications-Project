@@ -14,9 +14,11 @@
                 <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
             </div>
         </a>
+        {{#showButtons}}
         <a href="#/photos/delete/{{objectId}}">
             <button class="delete-button">Delete</button>
         </a>
+        {{/showButtons}}
     </li>
     {{/results}}
 </ul>

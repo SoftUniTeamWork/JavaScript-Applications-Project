@@ -3,9 +3,11 @@
     <p class="photo-name">{{name}}</p>
     <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
 </div>
+{{#showButtons}}
 <a href="#/photos/delete/{{objectId}}">
     <button class="delete-button">Delete</button>
 </a>
+{{/showButtons}}
 <a href="{{#picture}}{{url}}{{/picture}}" download>
     <button>Download</button>
 </a>

@@ -1,17 +1,21 @@
 <h3>Categories: </h3>
+{{#results.0}}{{#showButtons}}
 <a href="#/categories/new">Add category</a>
+{{/showButtons}}{{/results.0}}
 <ul id="categories-list">
     {{#results}}
     <li class="category" data-id="{{objectId}}" data-name="{{name}}">
         <div class="category-info">
             <p class="category-name">{{name}}</p>
         </div>
+        {{#showButtons}}
         <a href="#/categories/edit/{{objectId}}">
             <button class="edit-button">Edit</button>
         </a>
         <a href="#/categories/delete/{{objectId}}">
             <button class="delete-button">Delete</button>
         </a>
+        {{/showButtons}}
         <a href="#/albums/{{objectId}}">
             <button class="show-button">Show albums</button>
         </a>

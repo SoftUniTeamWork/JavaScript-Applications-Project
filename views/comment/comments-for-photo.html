@@ -6,9 +6,11 @@
             <p class="comment-content">{{content}}</p>
             <a href="#/users/{{#userId}}{{objectId}}{{/userId}}"><p class="comment-author">author: {{#userId}}{{username}}{{/userId}}</p></a>
         </div>
+        {{#showButtons}}
         <a href="#/comments/delete/{{objectId}}">
             <button class="delete-button">Delete</button>
         </a>
+        {{/showButtons}}
     </li>
     {{/results}}
 </ul>

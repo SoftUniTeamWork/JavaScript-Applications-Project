@@ -12,6 +12,7 @@
         <div class="album-info">
             <p class="album-name">{{name}}</p>
         </div>
+        {{#showButtons}}
         <a href="#/albums/edit/{{objectId}}">
             <button class="edit-button">Edit</button>
         </a>
@@ -21,6 +22,7 @@
         <a href="#/photos/new/{{objectId}}">
             <button class="add-photo-button">Add photo</button>
         </a>
+        {{/showButtons}}
         <a href="#/photos/showalbum/{{objectId}}/1">
             <button class="show-album-button">Show album</button>
         </a>

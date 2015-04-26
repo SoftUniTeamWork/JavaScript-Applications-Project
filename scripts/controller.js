@@ -214,6 +214,7 @@ app.controller = (function () {
     }
 
     var attachLoginHandler = function (selector,data) {
+
         var _data = data;
         var _this = this;
 
@@ -223,7 +224,6 @@ app.controller = (function () {
 
             data.users.login(username, password)
                 .then(function (data) {
-                        console.log(data);
                     _data.users.setUserData(data);
                     Noty.success("Successfully logged in.");
                     redirectTo('#/users/home/' + _data.users.getUserData().userId);
@@ -396,9 +396,18 @@ app.controller = (function () {
         }
 
         CategoryController.prototype.showCategories = function(userId, selector) {
+            var currentUserId = this._data.users.getUserData().userId;
+
             this._data.categoriesRepository.getCategoriesByUserId(userId)
                 .then(
                 function(data) {
+                    var categories = data['results'];
+                    categories.forEach(function(category) {
+                        if(category['ACL'][currentUserId] && category['ACL'][currentUserId]['write']) {
+                            category['showButtons'] = true;
+                        }
+                    });
+
                     $.get('./views/category/all-categories.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
@@ -497,9 +506,17 @@ app.controller = (function () {
         }
 
         AlbumController.prototype.showAlbumsFromCategory = function(id, selector) {
+            var userId = this._data.users.getUserData().userId;
             this._data.albumsRepository.getAlbumsByCategoryId(id)
                 .then(
                 function(data) {
+                    var albums = data['results'];
+                    albums.forEach(function(album) {
+                        if(album['ACL'][userId] && photo['ACL'][userId]['write']) {
+                            album['showButtons'] = true;
+                        }
+                    });
+
                     $.get('./views/album/albums-from-category.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
@@ -605,6 +622,10 @@ app.controller = (function () {
                 .then(
                 function(data){
                     photoData['photo'] = data;
+            
+                    if(data['ACL'][userId] && data['ACL'][userId]['write']) {
+                        photoData['photo']['showButtons'] = true;
+                    }
                 },
                 function(error){
                     Noty.error("Error loading photo.")
@@ -627,9 +648,10 @@ app.controller = (function () {
         }
 
         PhotoController.prototype.showPhotosFromAlbum = function(id, page, selector) {
-                var page = parseInt(page),
-                nextPage = page + 1,
-                prevPage = page - 1 < 1 ? 1 : page - 1;
+            var userId = this._data.users.getUserData().userId;
+            var page = parseInt(page),
+            nextPage = page + 1,
+            prevPage = page - 1 < 1 ? 1 : page - 1;
 
             this._data.photosRepository.getPhotosByAlbumId(id, PHOTOS_PER_PAGE, page)
                 .then(
@@ -637,6 +659,14 @@ app.controller = (function () {
                     if(data['results'].length === 0 && page > 1) {
                         redirectTo('#/photos/showalbum/' + id + '/' + (page - 1));
                     }
+
+                    var photos = data['results'];
+                    photos.forEach(function(photo) {
+                        if(photo['ACL'][userId] && photo['ACL'][userId]['write']) {
+                            photo['showButtons'] = true;
+                        }
+                    });
+
                     data['pageInfo'] = {nextPage: nextPage, prevPage: prevPage};
                     $.get('./views/photo/photos-from-album.html', function (view) {
                             output = Mustache.render(view, data);
@@ -725,9 +755,17 @@ app.controller = (function () {
         }
 
         CommentController.prototype.showCommentsForPhoto = function(id, selector) {
+            var userId = this._data.users.getUserData().userId;
             this._data.commentsRepository.getCommentsByPhotoId(id)
                 .then(
                 function(data) {
+                    var comments = data['results'];
+                    comments.forEach(function(comment) {
+                        if(comment['ACL'][userId] && comment['ACL'][userId]['write']) {
+                            comment['showButtons'] = true;
+                        }
+                    });
+
                     $.get('./views/comment/comments-for-photo.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).append(output);
