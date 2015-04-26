@@ -222,7 +222,7 @@ app.controller = (function () {
 
             data.users.login(username, password)
                 .then(function (data) {
-                    redirectTo('#/categories/showall/' + _data.users.getUserData().userId);
+                    redirectTo('#/users/home/' + _data.users.getUserData().userId);
 					Noty.success("Successfully logged in.");
                 },
                 function (error) {
@@ -390,6 +390,7 @@ app.controller = (function () {
             this._data.categoriesRepository.getCategoriesByUserId(userId)
                 .then(
                 function(data) {
+                    console.log(data);
                     $.get('./views/category/all-categories.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
