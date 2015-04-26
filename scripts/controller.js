@@ -218,9 +218,10 @@ app.controller = (function () {
         var _data = data;
         var _this = this;
 
-        $(selector).on('click', '#login-btn', function () {
+        $(selector).find('#login-btn').click(function () {
             var username = $('#login-username').val(),
                 password = $('#login-password').val();
+            console.log(username);
 
             data.users.login(username, password)
                 .then(function (data) {
