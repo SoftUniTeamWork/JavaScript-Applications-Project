@@ -81,13 +81,13 @@ app.data = (function () {
         Users.prototype.login = function (username, password) {
             var url = this._serviceUrl + 'login?username=' + username + '&password=' + password;
 
-            return this._ajaxRequester.get(url, credentials.getHeaders())
-                .then(function (data) {
-                    credentials.setSessionToken(data.sessionToken);
-                    credentials.setUsername(data.username);
-                    credentials.setUserId(data.objectId);
-                    return data;
-                });
+            return this._ajaxRequester.get(url, credentials.getHeaders());
+                // .then(function (data) {
+                //     credentials.setSessionToken(data.sessionToken);
+                //     credentials.setUsername(data.username);
+                //     credentials.setUserId(data.objectId);
+                //     return data;
+                // });
         }
 
         Users.prototype.register = function (userRegData) {
@@ -134,6 +134,12 @@ app.data = (function () {
                 username: credentials.getUsername(),
                 sessionToken: credentials.getSessionToken()
             }
+        }
+
+        Users.prototype.setUserData = function (data) {
+            credentials.setUsername(data['username']);
+            credentials.setSessionToken(data['sessionToken']);
+            credentials.setUserId(data['objectId']);
         }
 
         Users.prototype.logout = function() {

@@ -223,6 +223,8 @@ app.controller = (function () {
 
             data.users.login(username, password)
                 .then(function (data) {
+                        console.log(data);
+                    _data.users.setUserData(data);
                     Noty.success("Successfully logged in.");
                     redirectTo('#/users/home/' + _data.users.getUserData().userId);
                 },
