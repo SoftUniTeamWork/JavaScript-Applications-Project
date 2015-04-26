@@ -1,6 +1,6 @@
 var app = app || {};
 
-(function() {
+(function () {
     var baseUrl = "https://api.parse.com/1/";
     var ajaxRequester = app.ajaxRequester.get();
     var data = app.data.get(baseUrl, ajaxRequester);
@@ -14,8 +14,11 @@ var app = app || {};
 
         // Category routes
         this.get('#/categories/new', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
-            controllers.categoryController.new(mainSelector);
+
+                controllers.navigationController.showProfileNavigation(headerSelector);
+
+                controllers.categoryController.new(mainSelector);
+
         });
 
         this.post('#/categories/create', function () {

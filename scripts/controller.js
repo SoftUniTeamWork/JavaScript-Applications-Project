@@ -245,9 +245,14 @@ app.controller = (function () {
             var userRegData = {
                 username: $('#reg-username').val(),
                 password: $('#reg-password').val(),
+                //repeatPass: $('#repeat-password').val(),
                 email: $('#reg-email').val()
             };
 
+            if($('#repeat-password').val() !== userRegData.password){
+                Noty.error("passwords do not match");
+            }
+            else{
             data.users.register(userRegData)
                 .then(function (data) {
                     Noty.success("Registration successful.");
@@ -256,7 +261,9 @@ app.controller = (function () {
                 function (error) {
                     Noty.error("Your registration has encountered an error.");
                 });
+            }
         });
+
     }
 
     function formatDate(isoString) {
