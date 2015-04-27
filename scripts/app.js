@@ -13,12 +13,22 @@ var app = app || {};
             headerSelector = '#header';
 
         // Category routes
+
+        this.get('#/login', function () {
+            controllers.navigationController.showDefaultNavigation(headerSelector);
+            controllers.logController.loadLogin(mainSelector);
+        });
+
+        this.get('#/register', function () {
+            controllers.navigationController.showDefaultNavigation(headerSelector);
+            controllers.logController.loadRegister(mainSelector);
+
+        });
+
+
         this.get('#/categories/new', function () {
-
-                controllers.navigationController.showProfileNavigation(headerSelector);
-
-                controllers.categoryController.new(mainSelector);
-
+            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.categoryController.new(mainSelector);
         });
 
         this.post('#/categories/create', function () {
@@ -47,16 +57,6 @@ var app = app || {};
         });
 
         //user control
-        this.get('#/login', function () {
-            controllers.navigationController.showDefaultNavigation(headerSelector);
-            controllers.logController.loadLogin(mainSelector);
-        });
-
-        this.get('#/register', function () {
-            controllers.navigationController.showDefaultNavigation(headerSelector);
-            controllers.logController.loadRegister(mainSelector);
-
-        });
 
         this.get('#/logout', function () {
             controllers.navigationController.showProfileNavigation(headerSelector);
@@ -161,6 +161,7 @@ var app = app || {};
             controllers.navigationController.showProfileNavigation(headerSelector);
             controllers.likeController.delete(this.params['id']);
         });
+
     });
 
     app.router.run('#/login');

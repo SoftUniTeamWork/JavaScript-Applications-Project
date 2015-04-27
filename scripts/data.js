@@ -90,7 +90,7 @@ app.data = (function () {
                 // });
         }
 
-        Users.prototype.rexxgister = function (userRegData) {
+        Users.prototype.register = function (userRegData) {
             var url = this._serviceUrl + 'users';
 
             return this._ajaxRequester.post(url, userRegData, credentials.getHeaders());
