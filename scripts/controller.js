@@ -6,7 +6,7 @@ app.controller = (function () {
         this._data = data;
     }
 
-    BaseController.prototype.loadHeader = function(headerSelector) {
+    BaseController.prototype.loadHeader = function (headerSelector) {
         var userData;
         if (!this._data.users.isLogged()) {
             $(headerSelector).html("");
@@ -14,8 +14,8 @@ app.controller = (function () {
             userData = this._data.users.getUserData();
 
             this._data.users.getById(userData.userId)
-                .then(function(data) {
-                    $.get('./views/user-header.html', function(view) {
+                .then(function (data) {
+                    $.get('./views/user-header.html', function (view) {
                         var output = Mustache.render(view, data);
                         $(headerSelector).html(output);
                     });
@@ -53,7 +53,6 @@ app.controller = (function () {
     }
 
 
-
     BaseController.prototype.loadRegister = function (selector) {
         $(selector).load('./views/log/register.html');
     }
@@ -61,27 +60,27 @@ app.controller = (function () {
     BaseController.prototype.logout = function (selector) {
         this._data.users.logout();
         Noty.success("Successfully logged out.");
-        redirectTo('.#/');
+        redirectTo('.#/login');
     }
 
     BaseController.prototype.loadEditProfile = function (selector) {
         var userData;
         if (!this._data.users.isLogged()) {
-            redirectTo('#/');
-            return;
+            redirectTo('#/login');
         }
-
-        userData = this._data.users.getUserData();
-        this._data.users.getById(userData.userId)
-            .then(function(data) {
-                $.get('views/edit-profile.html', function(view) {
-                    var output = Mustache.render(view ,data),
-                        gender = data.gender;
-                    $(selector).html(output);
-                    $('input[type="radio"][value=' + gender + ']')
-                        .attr('checked', true);
+        else {
+            userData = this._data.users.getUserData();
+            this._data.users.getById(userData.userId)
+                .then(function (data) {
+                    $.get('views/edit-profile.html', function (view) {
+                        var output = Mustache.render(view, data),
+                            gender = data.gender;
+                        $(selector).html(output);
+                        $('input[type="radio"][value=' + gender + ']')
+                            .attr('checked', true);
+                    });
                 });
-            });
+        }
     }
 
     BaseController.prototype.attachEventHandlers = function () {
@@ -100,7 +99,7 @@ app.controller = (function () {
     var attachSubmitPostHandler = function (selector) {
         var _this = this;
 
-        $(selector).on('click', '#submit-post-btn', function() {
+        $(selector).on('click', '#submit-post-btn', function () {
             var userId = _this._data.users.getUserData().userId;
 
             var post = {
@@ -113,26 +112,26 @@ app.controller = (function () {
             };
 
             _this._data.posts.add(post, userId)
-                .then(function(data) {
+                .then(function (data) {
                     _this.loadHome(selector);
                     Noty.success('Post successfully added.');
                 },
-                function(error) {
+                function (error) {
                     Noty.error('Error submitting post.');
                 });
         });
     }
 
     var attachPictureUploadHandler = function (selector) {
-        $(selector).on('click', '#upload-file-button', function() {
+        $(selector).on('click', '#upload-file-button', function () {
             $('#picture').click();
         });
 
-        $(selector).on('change', '#picture', function() {
+        $(selector).on('change', '#picture', function () {
             var file = this.files[0];
             if (file.type.match(/image\/.*/)) {
                 var reader = new FileReader();
-                reader.onload = function() {
+                reader.onload = function () {
                     $('.picture-name').text(file.name);
                     $('.picture-preview').attr('src', reader.result);
                     $('#picture').attr('data-picture-data', reader.result);
@@ -145,7 +144,7 @@ app.controller = (function () {
     }
 
     var attachShowPostHandler = function (selector) {
-        $(selector).on('click', '#post-btn', function() {
+        $(selector).on('click', '#post-btn', function () {
             var container = $('#post-container');
             container.is(':visible') ? container.slideUp() : container.slideDown();
         });
@@ -153,7 +152,7 @@ app.controller = (function () {
 
     var attachHoverHandler = function (selector) {
         var that = this;
-        $(selector).on('mouseenter', '.profile-link', function() {
+        $(selector).on('mouseenter', '.profile-link', function () {
             var thisPerson = this,
                 id = $(thisPerson).attr('data-user-id');
 
@@ -167,20 +166,20 @@ app.controller = (function () {
 
             that._data.users.getById(id)
                 .then(
-                function(data) {
+                function (data) {
                     $.get('views/hover-box.html', function (view) {
                             var output = Mustache.render(view, data);
                             $('.hover-box').html(output);
                         }
                     );
                 },
-                function(error) {
+                function (error) {
                     Noty.error("Error retrieving data.");
                 }
             )
         });
 
-        $(selector).on('mouseleave', '.profile-link', function() {
+        $(selector).on('mouseleave', '.profile-link', function () {
             $('.hover-box').html("<p>Loading...</p>");
             $('.hover-box').hide();
         });
@@ -188,7 +187,7 @@ app.controller = (function () {
 
     var attachEditProfileHandler = function (selector) {
         var _this = this;
-        $(selector).on('click', '#save-btn', function() {
+        $(selector).on('click', '#save-btn', function () {
             var userId = _this._data.users.getUserData().userId,
                 userEditProfileData = {
                     password: $('#password').val(),
@@ -196,24 +195,24 @@ app.controller = (function () {
                     about: $('#about').val(),
                     gender: $('input[name="gender-radio"]:checked').val(),
                     picture: $('#picture').attr('data-picture-data')
-            };
+                };
 
             _this._data.users.editProfile(userId, userEditProfileData)
-                .then(function(data) {
+                .then(function (data) {
                     Noty.success("Profile successfully edited.");
                     redirectTo('#/');
                 },
-                function(error) {
+                function (error) {
                     Noty.error("Error saving changes. Please try again.");
                 });
         });
 
-        $(selector).on('click', '.cancel-btn', function() {
+        $(selector).on('click', '.cancel-btn', function () {
             redirectTo('#/');
         });
     }
 
-    var attachLoginHandler = function (selector,data) {
+    var attachLoginHandler = function (selector, data) {
 
         var _data = data;
         var _this = this;
@@ -236,7 +235,7 @@ app.controller = (function () {
         });
     }
 
-    var attachRegisterHandler = function (selector,data) {
+    var attachRegisterHandler = function (selector, data) {
 
 
         $(selector).on('click', '#reg-btn', function () {
@@ -249,18 +248,18 @@ app.controller = (function () {
                 email: $('#reg-email').val()
             };
 
-            if($('#repeat-password').val() !== userRegData.password){
+            if ($('#repeat-password').val() !== userRegData.password) {
                 Noty.error("passwords do not match");
             }
-            else{
-            data.users.register(userRegData)
-                .then(function (data) {
-                    Noty.success("Registration successful.");
-                    redirectTo('#/login');
-                },
-                function (error) {
-                    Noty.error("Your registration has encountered an error.");
-                });
+            else {
+                data.users.register(userRegData)
+                    .then(function (data) {
+                        Noty.success("Registration successful.");
+                        redirectTo('#/login');
+                    },
+                    function (error) {
+                        Noty.error("Your registration has encountered an error.");
+                    });
             }
         });
 
@@ -273,41 +272,49 @@ app.controller = (function () {
         return timestamp.getDate() + '-' + months[timestamp.getMonth()] + '-' + timestamp.getFullYear()
             + ' ' + timestamp.getHours() + ':' + timestamp.getMinutes();
     }
-    
+
     // Keep this method
     function redirectTo(url) {
         window.location = url;
     }
 
-    var LogController = (function() {
-        function LogController(data){
+
+    var LogController = (function () {
+        function LogController(data) {
             this._data = data
         }
 
         LogController.prototype.loadRegister = function (selector) {
             var data = this._data;
-            $(selector).load('./views/log/register.html',function(){
-                attachRegisterHandler(selector,data)
+            $(selector).load('./views/log/register.html', function () {
+                attachRegisterHandler(selector, data)
             });
         }
 
         LogController.prototype.loadLogin = function (selector) {
             var data = this._data;
-            $(selector).load('./views/log/login.html', function(){
-                attachLoginHandler(selector,data);
+            $(selector).load('./views/log/login.html', function () {
+                attachLoginHandler(selector, data);
             });
         }
 
         LogController.prototype.logout = function (selector) {
-            this._data.users.logout()
-            .then(
-                function(data){
-                    Noty.success("Successfully logged out.");
-                    redirectTo('#/login');
-                },
-                function(error){
-                    Noty.error("Error logging out.");
-                });
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to logout")
+                redirectTo('#/login');
+            } else {
+                this._data.users.logout()
+                    .then(
+                    function (data) {
+                        console.log('kur');
+                        Noty.success("Successfully logged out.");
+                        redirectTo('#/login');
+                    },
+                    function (error) {
+                        console.log("kur2");
+                        Noty.error("Error logging out.");
+                    });
+            }
         }
 
         return LogController;
@@ -315,83 +322,104 @@ app.controller = (function () {
 
     // Users controller
 
-    var UserController = (function() {
+    var UserController = (function () {
         var USERS_PER_PAGE = 10;
 
         function UserController(data) {
             this._data = data;
         }
 
-        UserController.prototype.showAllUsers = function(page, selector) {
-            var page = parseInt(page),
-                nextPage = page + 1,
-                prevPage = page - 1 < 1 ? 1 : page - 1;
+        UserController.prototype.showAllUsers = function (page, selector) {
 
-            this._data.users.getAll(USERS_PER_PAGE, page)
-               .then(
-                function(data) {
-                    if(data['results'].length === 0 && page > 1) {
-                        redirectTo('#/users/showall/' + id + '/' + (page - 1));
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in to see all users")
+                redirectTo('#/login');
+            } else {
+                var page = parseInt(page),
+                    nextPage = page + 1,
+                    prevPage = page - 1 < 1 ? 1 : page - 1;
+
+                this._data.users.getAll(USERS_PER_PAGE, page)
+                    .then(
+                    function (data) {
+                        if (data['results'].length === 0 && page > 1) {
+                            redirectTo('#/users/showall/' + id + '/' + (page - 1));
+                        }
+                        data['pageInfo'] = {nextPage: nextPage, prevPage: prevPage};
+
+                        $.get('./views/user/user-all.html', function (view) {
+                            output = Mustache.render(view, data);
+                            $(selector).html(output);
+                        });
+                    },
+                    function (error) {
+                        Noty.error("Error loading users data.");
                     }
-                    data['pageInfo'] = {nextPage: nextPage, prevPage: prevPage};
+                );
+            }
+            ;
+        }
 
-                    $.get('./views/user/user-all.html', function (view) {
+        UserController.prototype.showProfile = function (userId, selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to view profile")
+                redirectTo('#/login');
+            } else {
+                this._data.users.getById(userId)
+                    .then(
+                    function (data) {
+                        data['createdAt'] = formatDate(data['createdAt']);
+                        $.get('./views/user/user-profile.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
                         });
-                },
-                function(error) {
-                    Noty.error("Error loading users data.");
-                }
-            );
+                    },
+                    function (error) {
+                        Noty.error("Error loading user data.");
+                    }
+                );
+            }
         }
 
-        UserController.prototype.showProfile = function(userId, selector) {
-            this._data.users.getById(userId)
-                .then(
-                function(data) {
-                    data['createdAt'] = formatDate(data['createdAt']);
-
-                    $.get('./views/user/user-profile.html', function (view) {
-                            output = Mustache.render(view, data);
-                            $(selector).html(output);
-                        });
-                },
-                function(error) {
-                    Noty.error("Error loading user data.");
-                }
-            );
-        }
-
-        UserController.prototype.showTopPhotosOfUser = function(userId, selector) {
-            var sendData = {userId: userId};
-            this._data.functionsRepository.execute('getMostLikedUserPhotos', sendData)
-                .then(
-                function(data) {
-                    $.get('./views/user/user-home-top-photos.html', function (view) {
+        UserController.prototype.showTopPhotosOfUser = function (userId, selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to see top user photos")
+                redirectTo('#/login');
+            } else {
+                var sendData = {userId: userId};
+                this._data.functionsRepository.execute('getMostLikedUserPhotos', sendData)
+                    .then(
+                    function (data) {
+                        $.get('./views/user/user-home-top-photos.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).prepend(output);
                         });
-                },
-                function(error) {
-                    Noty.error("Error loading user's most liked photos.");
-                }
-            );
+                    },
+                    function (error) {
+                        Noty.error("Error loading user's most liked photos.");
+                    }
+                );
+            }
         }
 
-        UserController.prototype.showTopPhotosOfAllUsers = function(selector) {
-            this._data.functionsRepository.execute('getMostLikedPhotos')
-                .then(
-                function(data) {
-                    $.get('./views/user/user-home-top-photos-all.html', function (view) {
+        UserController.prototype.showTopPhotosOfAllUsers = function (selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to view top photos")
+                redirectTo('#/login');
+            } else {
+                this._data.functionsRepository.execute('getMostLikedPhotos')
+                    .then(
+                    function (data) {
+                        $.get('./views/user/user-home-top-photos-all.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).append(output);
                         });
-                },
-                function(error) {
-                    Noty.error("Error loading most liked photos.");
-                }
-            );
+                    },
+                    function (error) {
+                        Noty.error("Error loading most liked photos.");
+                    }
+                );
+            }
         }
 
         return UserController;
@@ -400,213 +428,253 @@ app.controller = (function () {
     // Category Controller
     // Will be moved to separate script with require.js
 
-    var CategoryController = (function(){
+    var CategoryController = (function () {
         function CategoryController(data) {
             this._data = data;
         }
 
-        CategoryController.prototype.showCategories = function(userId, selector) {
-            var currentUserId = this._data.users.getUserData().userId;
+        CategoryController.prototype.showCategories = function (userId, selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in to view your categories!")
+                redirectTo('#/login');
+            } else {
+                var currentUserId = this._data.users.getUserData().userId;
 
-            this._data.categoriesRepository.getCategoriesByUserId(userId)
-                .then(
-                function(data) {
-                    var categories = data['results'];
-                    categories.forEach(function(category) {
-                        if(category['ACL'][currentUserId] && category['ACL'][currentUserId]['write']) {
-                            category['showButtons'] = true;
-                        }
-                    });
+                this._data.categoriesRepository.getCategoriesByUserId(userId)
+                    .then(
+                    function (data) {
+                        var categories = data['results'];
+                        categories.forEach(function (category) {
+                            if (category['ACL'][currentUserId] && category['ACL'][currentUserId]['write']) {
+                                category['showButtons'] = true;
+                            }
+                        });
 
-                    $.get('./views/category/all-categories.html', function (view) {
+                        $.get('./views/category/all-categories.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
                         });
-                },
-                function(error) {
-                    Noty.error("Error loading categories.");
-                }
-            );
+                    },
+                    function (error) {
+                        Noty.error("Error loading categories.");
+                    }
+                );
+            }
+        }
+        CategoryController.prototype.new = function (selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to create category!")
+                redirectTo('#/login');
+            } else {
+                $(selector).load('./views/category/new-category.html');
+            }
         }
 
-        CategoryController.prototype.new = function(selector) {
-            $(selector).load('./views/category/new-category.html');
-        }
-
-        CategoryController.prototype.create = function(params) {
-            var userId = this._data.users.getUserData().userId;
-            var categoryData = {
+        CategoryController.prototype.create = function (params) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first create category")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId;
+                var categoryData = {
                     name: params['category-name'],
                     userId: {__type: 'Pointer', className: '_User', objectId: userId}
                 };
-            
-            this._data.categoriesRepository.add(categoryData, userId) 
-                .then(
-                function(data) {
-                    redirectTo('#/categories/showall/' + userId);
-                    Noty.success('Category successfully added.');
-                }, 
-                function(erorr) {
-                    Noty.error('Error submitting category.');
-                })
+
+                this._data.categoriesRepository.add(categoryData, userId)
+                    .then(
+                    function (data) {
+                        redirectTo('#/categories/showall/' + userId);
+                        Noty.success('Category successfully added.');
+                    },
+                    function (erorr) {
+                        Noty.error('Error submitting category.');
+                    })
+            }
         }
 
-        CategoryController.prototype.edit = function(id, selector) {
-            this._data.categoriesRepository.getById(id)
-                .then(function(data) {
-                    $.get('./views/category/edit-category.html', function (view) {
+        CategoryController.prototype.edit = function (id, selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to edit category!")
+                redirectTo('#/login');
+            } else {
+                this._data.categoriesRepository.getById(id)
+                    .then(function (data) {
+                        $.get('./views/category/edit-category.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
                         });
-                }, 
-                function(erorr) {
-                    Noty.error('Error getting category info.');
-                })
-        }
-
-        CategoryController.prototype.update = function(params) {
-            var userId = this._data.users.getUserData().userId;
-            categoryData = {
-                name: params['category-name']
+                    },
+                    function (erorr) {
+                        Noty.error('Error getting category info.');
+                    })
             }
-
-            this._data.categoriesRepository.updateCategory(params['id'], categoryData)
-                .then(function(data) {
-                    redirectTo('#/categories/showall/' + userId);
-                }, 
-                function(erorr) {
-                    Noty.error('Error updating category.');
-                })
         }
 
-        CategoryController.prototype.delete = function(id) {
-            var userId = this._data.users.getUserData().userId;
-            this._data.categoriesRepository.delete(id)
-                .then(function(data) {
-                    redirectTo('#/categories/showall/' + userId);
-                }, 
-                function(erorr) {
-                    Noty.error('Error deleting category.');
-                })
-        }
+        CategoryController.prototype.update = function (params) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to update category")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId;
+                categoryData = {
+                    name: params['category-name']
+                }
 
+                this._data.categoriesRepository.updateCategory(params['id'], categoryData)
+                    .then(function (data) {
+                        redirectTo('#/categories/showall/' + userId);
+                    },
+                    function (erorr) {
+                        Noty.error('Error updating category.');
+                    })
+            }
+        }
+        CategoryController.prototype.delete = function (id) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to delete category!")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId;
+                this._data.categoriesRepository.delete(id)
+                    .then(function (data) {
+                        redirectTo('#/categories/showall/' + userId);
+                    },
+                    function (erorr) {
+                        Noty.error('Error deleting category.');
+                    })
+            }
+        }
         return CategoryController;
     })();
 
-    // Events for categories views 
-
-    // CategoryController.prototype.attachEventHandlers = function() {
-    //     var selector = "#main";
-
-    //     attachNewCategoryEvents.call(this, selector);
-    // }
-
-    // var attachNewCategoryEvents = function(selector) {
-    //     var _this = this;
-
-    //     // events for new category view
-    // }
-
-    // Album Controller
-    // Will be moved to separate script with require.js
-
-    var AlbumController = (function(){
+    var AlbumController = (function () {
         function AlbumController(data) {
             this._data = data;
         }
 
-        AlbumController.prototype.showAlbumsFromCategory = function(id, selector) {
-            var userId = this._data.users.getUserData().userId;
-            this._data.albumsRepository.getAlbumsByCategoryId(id)
-                .then(
-                function(data) {
-                    var albums = data['results'];
-                    albums.forEach(function(album) {
-                        if(album['ACL'][userId] && album['ACL'][userId]['write']) {
-                            album['showButtons'] = true;
-                        }
-                    });
+        AlbumController.prototype.showAlbumsFromCategory = function (id, selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to view albums")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId;
+                this._data.albumsRepository.getAlbumsByCategoryId(id)
+                    .then(
+                    function (data) {
+                        var albums = data['results'];
+                        albums.forEach(function (album) {
+                            if (album['ACL'][userId] && album['ACL'][userId]['write']) {
+                                album['showButtons'] = true;
+                            }
+                        });
 
-                    $.get('./views/album/albums-from-category.html', function (view) {
+                        $.get('./views/album/albums-from-category.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
                         });
-                },
-                function(error) {
-                    Noty.error("Error loading albums.");
-                }
-            );
+                    },
+                    function (error) {
+                        Noty.error("Error loading albums.");
+                    }
+                );
+            }
         }
 
-        AlbumController.prototype.new = function(selector) {
-            var userId = this._data.users.getUserData().userId;
-            this._data.categoriesRepository.getCategoriesByUserId(userId)
-                .then(function(data) {
-                    $.get('./views/album/new-album.html', function (view) {
+        AlbumController.prototype.new = function (selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to create album")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId;
+                this._data.categoriesRepository.getCategoriesByUserId(userId)
+                    .then(function (data) {
+                        $.get('./views/album/new-album.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
                         });
-                }, 
-                function(erorr) {
-                    Noty.error('Error getting categories list.');
-                })
+                    },
+                    function (erorr) {
+                        Noty.error('Error getting categories list.');
+                    })
+            }
         }
 
-        AlbumController.prototype.create = function(params) {
-            var userId = this._data.users.getUserData().userId;
-            var albumData = {
+        AlbumController.prototype.create = function (params) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to create album!")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId;
+                var albumData = {
                     name: params['album-name'],
                     categoryId: {__type: 'Pointer', className: 'Category', objectId: params['category-id']}
                 };
-        
-            this._data.albumsRepository.add(albumData, userId) 
-                .then(
-                function(data) {
-                    redirectTo('#/albums/' + params['category-id']);
-                    Noty.success('Album successfully added.');
-                }, 
-                function(erorr) {
-                    Noty.error('Error creating album.');
-                })
+
+                this._data.albumsRepository.add(albumData, userId) 
+                    .then(
+                    function(data) {
+                        redirectTo('#/albums/' + params['category-id']);
+                        Noty.success('Album successfully added.');
+                    }, 
+                    function(erorr) {
+                        Noty.error('Error creating album.');
+                    })
+            }
         }
 
-        AlbumController.prototype.edit = function(id, selector) {
-            this._data.albumsRepository.getById(id)
-                .then(function(data) {
-                    $.get('./views/album/edit-album.html', function (view) {
+        AlbumController.prototype.edit = function (id, selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to use this function!")
+                redirectTo('#/login');
+            } else {
+                this._data.albumsRepository.getById(id)
+                    .then(function (data) {
+                        $.get('./views/album/edit-album.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
                         });
-                }, 
-                function(erorr) {
-                    Noty.error('Error getting album info.');
-                })
-        }
-
-        AlbumController.prototype.update = function(params) {
-            var userId = this._data.users.getUserData().userId;
-            var albumData = {
-                name: params['album-name']
+                    },
+                    function (erorr) {
+                        Noty.error('Error getting album info.');
+                    })
             }
+        }
+        
+        AlbumController.prototype.update = function (params) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to use this function!")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId;
+                var albumData = {
+                    name: params['album-name']
+                }
 
-            this._data.albumsRepository.updateAlbum(params['id'], albumData)
-                .then(function(data) {
-                    redirectTo('#/albums/' + params['category-id']);
-                }, 
-                function(erorr) {
-                    Noty.error('Error updating album.');
-                })
+                this._data.albumsRepository.updateAlbum(params['id'], albumData)
+                    .then(function(data) {
+                        redirectTo('#/albums/' + params['category-id']);
+                    }, 
+                    function(erorr) {
+                        Noty.error('Error updating album.');
+                    })
+            }
         }
 
-        AlbumController.prototype.delete = function(id, categoryId) {
+        AlbumController.prototype.delete = function (id, categoryId) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to use this function!")
+                redirectTo('#/login');
+            } else {
             var userId = this._data.users.getUserData().userId;
             this._data.albumsRepository.delete(id)
-                .then(function(data) {
+                .then(function (data) {
                     redirectTo('#/albums/' + categoryId);
-                }, 
-                function(erorr) {
+                },
+                function (erorr) {
                     Noty.error('Error deleting album.');
                 })
+            }
         }
 
         return AlbumController;
@@ -615,7 +683,7 @@ app.controller = (function () {
     // Photo Controller
     // Will be moved to separate script with require.js
 
-    var PhotoController = (function(){
+    var PhotoController = (function () {
         function PhotoController(data) {
             this._data = data;
         }
@@ -631,145 +699,169 @@ app.controller = (function () {
             });
         }
 
-        PhotoController.prototype.showPhoto = function(id, selector) {
-            var userId = this._data.users.getUserData().userId,
-                photoData = {},
-                _this = this;
+        PhotoController.prototype.showPhoto = function (id, selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to use this function!")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId,
+                    photoData = {},
+                    _this = this;
 
-            this._data.photosRepository.getById(id)
-                .then(
-                function(data){
-                    photoData['photo'] = data;
-            
-                    if(data['ACL'][userId] && data['ACL'][userId]['write']) {
-                        photoData['photo']['showButtons'] = true;
-                    }
+                this._data.photosRepository.getById(id)
+                    .then(
+                    function (data) {
+                        photoData['photo'] = data;
+                        if (data['ACL'][userId] && data['ACL'][userId]['write']) {
+                            photoData['photo']['showButtons'] = true;
+                        }
 
-                    $.get('./views/photo/show-photo.html', function (view) {
-                        output = Mustache.render(view, photoData);
-                        $(selector).html(output);
+                        $.get('./views/photo/show-photo.html', function (view) {
+                            output = Mustache.render(view, photoData);
+                            $(selector).html(output);
+                        });
+                    },
+                    function (error) {
+                        Noty.error("Error loading photo.")
                     });
-
-                },
-                function(error){
-                    Noty.error("Error loading photo.")
-                });       
+            }
         }
 
-        PhotoController.prototype.showPhotosFromAlbum = function(id, page, selector) {
-            var userId = this._data.users.getUserData().userId;
-            var page = parseInt(page),
-            nextPage = page + 1,
-            prevPage = page - 1 < 1 ? 1 : page - 1;
+        PhotoController.prototype.showPhotosFromAlbum = function (id, page, selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to use this function!")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId;
+                var page = parseInt(page),
+                    nextPage = page + 1,
+                    prevPage = page - 1 < 1 ? 1 : page - 1;
 
-            this._data.photosRepository.getPhotosByAlbumId(id, PHOTOS_PER_PAGE, page)
-                .then(
-                function(data) {
-                    if(data['results'].length === 0 && page > 1) {
-                        redirectTo('#/photos/showalbum/' + id + '/' + (page - 1));
-                    }
-
-                    var photos = data['results'];
-                    photos.forEach(function(photo) {
-                        if(photo['ACL'][userId] && photo['ACL'][userId]['write']) {
-                            photo['showButtons'] = true;
+                this._data.photosRepository.getPhotosByAlbumId(id, PHOTOS_PER_PAGE, page)
+                    .then(
+                    function (data) {
+                        if (data['results'].length === 0 && page > 1) {
+                            redirectTo('#/photos/showalbum/' + id + '/' + (page - 1));
                         }
-                    });
 
-                    data['pageInfo'] = {nextPage: nextPage, prevPage: prevPage};
-                    $.get('./views/photo/photos-from-album.html', function (view) {
+                        var photos = data['results'];
+                        photos.forEach(function (photo) {
+                            if (photo['ACL'][userId] && photo['ACL'][userId]['write']) {
+                                photo['showButtons'] = true;
+                            }
+                        });
+
+                        data['pageInfo'] = {nextPage: nextPage, prevPage: prevPage};
+                        $.get('./views/photo/photos-from-album.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
                         });
-                },
-                function(error) {
-                    Noty.error("Error loading photos.");
-                }
-            );
+                    },
+                    function (error) {
+                        Noty.error("Error loading photos.");
+                    }
+                );
+            }
         }
 
-        PhotoController.prototype.new = function(id, selector) {
-            $.get('./views/photo/new-photo.html', function (view) {
-                        var data = {
-                            albumId: id
-                        }
-                        var output = Mustache.render(view, data);
-                        $(selector).html(output);
-                    });
+        PhotoController.prototype.new = function (id, selector) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first add photo!")
+                redirectTo('#/login');
+            } else {
+                $.get('./views/photo/new-photo.html', function (view) {
+                    var data = {
+                        albumId: id
+                    }
+                    var output = Mustache.render(view, data);
+                    $(selector).html(output);
+                });
+            }
         }
 
-        PhotoController.prototype.create = function(params) {
-            var _this = this,
-                userId = this._data.users.getUserData().userId,
-                picInput = document.getElementById('photoInput'),
-                picture = picInput.files[0],
-                size = picture.size || picture.fileSize,
-                mime = picture.type || picture.mimeType; 
+        PhotoController.prototype.create = function (params) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to use this function")
+                redirectTo('#/login');
+            } else {
+                var _this = this,
+                    userId = this._data.users.getUserData().userId,
+                    picInput = document.getElementById('photoInput'),
+                    picture = picInput.files[0],
+                    size = picture.size || picture.fileSize,
+                    mime = picture.type || picture.mimeType;
 
-                if(picture.size > PHOTO_MAX_SIZE) {
+                if (picture.size > PHOTO_MAX_SIZE) {
                     Noty.error('Photo size is too large');
                     return;
-                } else if(!mime.match(/image\/.*/)) {
+                } else if (!mime.match(/image\/.*/)) {
                     Noty.error('File is not in correct format');
                     return;
                 }
 
-            this._data.filesRepository.upload(picture)
-            .then(
-                function(data) {
-                    var photoData = {
-                        name: params['photo-name'],
-                        picture: {
-                            '__type': 'File',
-                            'url': data.url,
-                            'name': data.name
-                        },
-                        albumId: {__type: 'Pointer', className: 'Album', objectId: params['id']}
-                    }
-                    _this._data.photosRepository.add(photoData, userId)
+                this._data.filesRepository.upload(picture)
                     .then(
-                        function(data){
-                            Noty.success('Photo successfully added.');
-                            redirectTo('#/photos/show/' + data['objectId']);
-                        },
-                        function(data){
-                            Noty.error('Error adding photo.');
-                        })
-                }, 
-                function(erorr) {
-                    Noty.error('Error uploading file.');
-                })      
+                    function (data) {
+                        var photoData = {
+                            name: params['photo-name'],
+                            picture: {
+                                '__type': 'File',
+                                'url': data.url,
+                                'name': data.name
+                            },
+                            albumId: {__type: 'Pointer', className: 'Album', objectId: params['id']}
+                        }
+                        _this._data.photosRepository.add(photoData, userId)
+                            .then(
+                            function (data) {
+                                Noty.success('Photo successfully added.');
+                                redirectTo('#/photos/show/' + data['objectId']);
+                            },
+                            function (data) {
+                                Noty.error('Error adding photo.');
+                            })
+                    },
+                    function (erorr) {
+                        Noty.error('Error uploading file.');
+                    })
+            }
         }
 
-        PhotoController.prototype.delete = function(id, albumId) {
-            this._data.photosRepository.delete(id)
-                .then(function(data) {
-                    redirectTo('#/photos/showalbum/' + albumId + '/1');
-                }, 
-                function(erorr) {
-                    Noty.error('Error deleting album.');
-                })
+        PhotoController.prototype.delete = function (id, albumId) {
+            if (!this._data.users.isLogged()) {
+                Noty.error("You must be logged in first to delete photo")
+                redirectTo('#/login');
+            } else {
+                var userId = this._data.users.getUserData().userId;
+                this._data.photosRepository.delete(id)
+                    .then(function (data) {
+                        redirectTo('#/photos/showalbum/' + albumId + '/1');
+                    },
+                    function (erorr) {
+                        Noty.error('Error deleting photo.');
+                    })
+            }
         }
-
         return PhotoController;
     })();
 
     // Comment Controller
     // Will be moved to separate script with require.js
 
-    var CommentController = (function(){
+    var CommentController = (function () {
         function CommentController(data) {
             this._data = data;
         }
 
-        CommentController.prototype.showCommentsForPhoto = function(id, selector) {
+        CommentController.prototype.showCommentsForPhoto = function (id, selector) {
+
             var userId = this._data.users.getUserData().userId;
             this._data.commentsRepository.getCommentsByPhotoId(id)
                 .then(
-                function(data) {
+                function (data) {
                     var comments = data['results'];
-                    comments.forEach(function(comment) {
-                        if(comment['ACL'][userId] && comment['ACL'][userId]['write']) {
+                    comments.forEach(function (comment) {
+                        if (comment['ACL'][userId] && comment['ACL'][userId]['write']) {
                             comment['showButtons'] = true;
                         }
                     });
@@ -779,29 +871,29 @@ app.controller = (function () {
                             $(selector).html(output);
                         });
                 },
-                function(error) {
+                function (error) {
                     Noty.error("Error loading comments.");
                 }
             );
         }
 
-        CommentController.prototype.create = function(params) {
+        CommentController.prototype.create = function (params) {
             var userId = this._data.users.getUserData().userId;
             var commentData = {
-                    content: params['content'],
-                    photoId: {__type: 'Pointer', className: 'Photo', objectId: params['id']},
-                    userId: {__type: 'Pointer', className: '_User', objectId: userId}
-                };
-        
-            this._data.commentsRepository.add(commentData, userId) 
+                content: params['content'],
+                photoId: {__type: 'Pointer', className: 'Photo', objectId: params['id']},
+                userId: {__type: 'Pointer', className: '_User', objectId: userId}
+            };
+
+            this._data.commentsRepository.add(commentData, userId)
                 .then(
                 function(data) {
                     redirectTo('#/comments/show/' + params['id']);
                     Noty.success('Comment successfully added.');
-                }, 
-                function(erorr) {
+                },
+                function (erorr) {
                     Noty.error('Error creating comment.');
-                })   
+                }); 
         }
 
         CommentController.prototype.delete = function(id, photoId) {
@@ -811,7 +903,7 @@ app.controller = (function () {
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting comment.');
-                })
+                });
         }
 
         return CommentController;
@@ -819,19 +911,19 @@ app.controller = (function () {
 
     // Likes controller
 
-    var LikeController = (function(){
+    var LikeController = (function () {
         function LikeController(data) {
             this._data = data;
         }
 
-        LikeController.prototype.create = function(id) {
+        LikeController.prototype.create = function (id) {
             var userId = this._data.users.getUserData().userId;
             var likeData = {
-                    photoId: {__type: 'Pointer', className: 'Photo', objectId: id},
-                    userId: {__type: 'Pointer', className: '_User', objectId: userId}
-                };
-        
-            this._data.likesRepository.add(likeData, userId) 
+                photoId: {__type: 'Pointer', className: 'Photo', objectId: id},
+                userId: {__type: 'Pointer', className: '_User', objectId: userId}
+            };
+
+            this._data.likesRepository.add(likeData, userId)
                 .then(
                 function(data) {
                     redirectTo('#/likes/show/' + id);
@@ -839,7 +931,7 @@ app.controller = (function () {
                 }, 
                 function(erorr) {
                     Noty.error('Error submitting like.');
-                })   
+                });  
         }
 
         LikeController.prototype.delete = function(id, photoId) {
@@ -878,24 +970,24 @@ app.controller = (function () {
     // Navigation Controller
     // Will be moved to separate script with require.js
 
-    var NavigationController = (function(){
+    var NavigationController = (function () {
         function NavigationController(data) {
-           this._data = data;
+            this._data = data;
         }
 
-        NavigationController.prototype.showProfileNavigation = function(selector) {
+        NavigationController.prototype.showProfileNavigation = function (selector) {
             var _this = this;
             $.get('./views/navigation/profile-navigation.html', function (view) {
-                    var data = _this._data.users.getUserData();                
-                    output = Mustache.render(view, data);
-                    $(selector).html(output);
-                });
+                var data = _this._data.users.getUserData();
+                output = Mustache.render(view, data);
+                $(selector).html(output);
+            });
         }
 
-        NavigationController.prototype.showDefaultNavigation = function(selector) {
+        NavigationController.prototype.showDefaultNavigation = function (selector) {
             $.get('./views/navigation/default.html', function (view) {
-                        $(selector).html(view);
-                });
+                $(selector).html(view);
+            });
         }
 
         return NavigationController;

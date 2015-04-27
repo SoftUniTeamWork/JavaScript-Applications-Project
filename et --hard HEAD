@@ -1,0 +1,361 @@
+[1mdiff --git a/libs/node_modules/shimney-sammy/main.js b/libs/node_modules/shimney-sammy/main.js[m
+[1mindex b59cad2..25aa78a 100644[m
+[1m--- a/libs/node_modules/shimney-sammy/main.js[m
+[1m+++ b/libs/node_modules/shimney-sammy/main.js[m
+[36m@@ -109,7 +109,9 @@[m
+   if (typeof window.console != 'undefined') {[m
+     if (_isFunction(window.console.log.apply)) {[m
+       Sammy.addLogger(function() {[m
+[31m-        window.console.log.apply(window.console, arguments);[m
+[32m+[m[32m          window.console.log.apply(window.console, arguments);[m
+[32m+[m[32m          Noty.error('No such page available');[m
+[32m+[m[32m          window.location.replace('#/');[m
+       });[m
+     } else {[m
+       Sammy.addLogger(function() {[m
+[1mdiff --git a/scripts/app.js b/scripts/app.js[m
+[1mindex cb740d8..b04f287 100644[m
+[1m--- a/scripts/app.js[m
+[1m+++ b/scripts/app.js[m
+[36m@@ -13,12 +13,22 @@[m [mvar app = app || {};[m
+             headerSelector = '#header';[m
+ [m
+         // Category routes[m
+[32m+[m
+[32m+[m[32m        this.get('#/login', function () {[m
+[32m+[m[32m            controllers.navigationController.showDefaultNavigation(headerSelector);[m
+[32m+[m[32m            controllers.logController.loadLogin(mainSelector);[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m[32m        this.get('#/register', function () {[m
+[32m+[m[32m            controllers.navigationController.showDefaultNavigation(headerSelector);[m
+[32m+[m[32m            controllers.logController.loadRegister(mainSelector);[m
+[32m+[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m
+         this.get('#/categories/new', function () {[m
+[31m-[m
+[31m-                controllers.navigationController.showProfileNavigation(headerSelector);[m
+[31m-[m
+[31m-                controllers.categoryController.new(mainSelector);[m
+[31m-[m
+[32m+[m[32m            controllers.navigationController.showProfileNavigation(headerSelector);[m
+[32m+[m[32m            controllers.categoryController.new(mainSelector);[m
+         });[m
+ [m
+         this.post('#/categories/create', function () {[m
+[36m@@ -47,16 +57,6 @@[m [mvar app = app || {};[m
+         });[m
+ [m
+         //user control[m
+[31m-        this.get('#/login', function () {[m
+[31m-            controllers.navigationController.showDefaultNavigation(headerSelector);[m
+[31m-            controllers.logController.loadLogin(mainSelector);[m
+[31m-        });[m
+[31m-[m
+[31m-        this.get('#/register', function () {[m
+[31m-            controllers.navigationController.showDefaultNavigation(headerSelector);[m
+[31m-            controllers.logController.loadRegister(mainSelector);[m
+[31m-[m
+[31m-        });[m
+ [m
+         this.get('#/logout', function () {[m
+             controllers.navigationController.showProfileNavigation(headerSelector);[m
+[36m@@ -161,6 +161,7 @@[m [mvar app = app || {};[m
+             controllers.navigationController.showProfileNavigation(headerSelector);[m
+             controllers.likeController.delete(this.params['id']);[m
+         });[m
+[32m+[m
+     });[m
+ [m
+     app.router.run('#/login');[m
+[1mdiff --git a/scripts/controller.js b/scripts/controller.js[m
+[1mindex 9b9a6b8..482af9e 100644[m
+[1m--- a/scripts/controller.js[m
+[1m+++ b/scripts/controller.js[m
+[36m@@ -6,7 +6,7 @@[m [mapp.controller = (function () {[m
+         this._data = data;[m
+     }[m
+ [m
+[31m-    BaseController.prototype.loadHeader = function(headerSelector) {[m
+[32m+[m[32m    BaseController.prototype.loadHeader = function (headerSelector) {[m
+         var userData;[m
+         if (!this._data.users.isLogged()) {[m
+             $(headerSelector).html("");[m
+[36m@@ -14,8 +14,8 @@[m [mapp.controller = (function () {[m
+             userData = this._data.users.getUserData();[m
+ [m
+             this._data.users.getById(userData.userId)[m
+[31m-                .then(function(data) {[m
+[31m-                    $.get('./views/user-header.html', function(view) {[m
+[32m+[m[32m                .then(function (data) {[m
+[32m+[m[32m                    $.get('./views/user-header.html', function (view) {[m
+                         var output = Mustache.render(view, data);[m
+                         $(headerSelector).html(output);[m
+                     });[m
+[36m@@ -53,7 +53,6 @@[m [mapp.controller = (function () {[m
+     }[m
+ [m
+ [m
+[31m-[m
+     BaseController.prototype.loadRegister = function (selector) {[m
+         $(selector).load('./views/log/register.html');[m
+     }[m
+[36m@@ -61,27 +60,27 @@[m [mapp.controller = (function () {[m
+     BaseController.prototype.logout = function (selector) {[m
+         this._data.users.logout();[m
+         Noty.success("Successfully logged out.");[m
+[31m-        redirectTo('.#/');[m
+[32m+[m[32m        redirectTo('.#/login');[m
+     }[m
+ [m
+     BaseController.prototype.loadEditProfile = function (selector) {[m
+         var userData;[m
+         if (!this._data.users.isLogged()) {[m
+[31m-            redirectTo('#/');[m
+[31m-            return;[m
+[32m+[m[32m            redirectTo('#/login');[m
+         }[m
+[31m-[m
+[31m-        userData = this._data.users.getUserData();[m
+[31m-        this._data.users.getById(userData.userId)[m
+[31m-            .then(function(data) {[m
+[31m-                $.get('views/edit-profile.html', function(view) {[m
+[31m-                    var output = Mustache.render(view ,data),[m
+[31m-                        gender = data.gender;[m
+[31m-                    $(selector).html(output);[m
+[31m-                    $('input[type="radio"][value=' + gender + ']')[m
+[31m-                        .attr('checked', true);[m
+[32m+[m[32m        else {[m
+[32m+[m[32m            userData = this._data.users.getUserData();[m
+[32m+[m[32m            this._data.users.getById(userData.userId)[m
+[32m+[m[32m                .then(function (data) {[m
+[32m+[m[32m                    $.get('views/edit-profile.html', function (view) {[m
+[32m+[m[32m                        var output = Mustache.render(view, data),[m
+[32m+[m[32m                            gender = data.gender;[m
+[32m+[m[32m                        $(selector).html(output);[m
+[32m+[m[32m                        $('input[type="radio"][value=' + gender + ']')[m
+[32m+[m[32m                            .attr('checked', true);[m
+[32m+[m[32m                    });[m
+                 });[m
+[31m-            });[m
+[32m+[m[32m        }[m
+     }[m
+ [m
+     BaseController.prototype.attachEventHandlers = function () {[m
+[36m@@ -100,7 +99,7 @@[m [mapp.controller = (function () {[m
+     var attachSubmitPostHandler = function (selector) {[m
+         var _this = this;[m
+ [m
+[31m-        $(selector).on('click', '#submit-post-btn', function() {[m
+[32m+[m[32m        $(selector).on('click', '#submit-post-btn', function () {[m
+             var userId = _this._data.users.getUserData().userId;[m
+ [m
+             var post = {[m
+[36m@@ -113,26 +112,26 @@[m [mapp.controller = (function () {[m
+             };[m
+ [m
+             _this._data.posts.add(post, userId)[m
+[31m-                .then(function(data) {[m
+[32m+[m[32m                .then(function (data) {[m
+                     _this.loadHome(selector);[m
+                     Noty.success('Post successfully added.');[m
+                 },[m
+[31m-                function(error) {[m
+[32m+[m[32m                function (error) {[m
+                     Noty.error('Error submitting post.');[m
+                 });[m
+         });[m
+     }[m
+ [m
+     var attachPictureUploadHandler = function (selector) {[m
+[31m-        $(selector).on('click', '#upload-file-button', function() {[m
+[32m+[m[32m        $(selector).on('click', '#upload-file-button', function () {[m
+             $('#picture').click();[m
+         });[m
+ [m
+[31m-        $(selector).on('change', '#picture', function() {[m
+[32m+[m[32m        $(selector).on('change', '#picture', function () {[m
+             var file = this.files[0];[m
+             if (file.type.match(/image\/.*/)) {[m
+                 var reader = new FileReader();[m
+[31m-                reader.onload = function() {[m
+[32m+[m[32m                reader.onload = function () {[m
+                     $('.picture-name').text(file.name);[m
+                     $('.picture-preview').attr('src', reader.result);[m
+                     $('#picture').attr('data-picture-data', reader.result);[m
+[36m@@ -145,7 +144,7 @@[m [mapp.controller = (function () {[m
+     }[m
+ [m
+     var attachShowPostHandler = function (selector) {[m
+[31m-        $(selector).on('click', '#post-btn', function() {[m
+[32m+[m[32m        $(selector).on('click', '#post-btn', function () {[m
+             var container = $('#post-container');[m
+             container.is(':visible') ? container.slideUp() : container.slideDown();[m
+         });[m
+[36m@@ -153,7 +152,7 @@[m [mapp.controller = (function () {[m
+ [m
+     var attachHoverHandler = function (selector) {[m
+         var that = this;[m
+[31m-        $(selector).on('mouseenter', '.profile-link', function() {[m
+[32m+[m[32m        $(selector).on('mouseenter', '.profile-link', function () {[m
+             var thisPerson = this,[m
+                 id = $(thisPerson).attr('data-user-id');[m
+ [m
+[36m@@ -167,20 +166,20 @@[m [mapp.controller = (function () {[m
+ [m
+             that._data.users.getById(id)[m
+                 .then([m
+[31m-                function(data) {[m
+[32m+[m[32m                function (data) {[m
+                     $.get('views/hover-box.html', function (view) {[m
+                             var output = Mustache.render(view, data);[m
+                             $('.hover-box').html(output);[m
+                         }[m
+                     );[m
+                 },[m
+[31m-                function(error) {[m
+[32m+[m[32m                function (error) {[m
+                     Noty.error("Error retrieving data.");[m
+                 }[m
+             )[m
+         });[m
+ [m
+[31m-        $(selector).on('mouseleave', '.profile-link', function() {[m
+[32m+[m[32m        $(selector).on('mouseleave', '.profile-link', function () {[m
+             $('.hover-box').html("<p>Loading...</p>");[m
+             $('.hover-box').hide();[m
+         });[m
+[36m@@ -188,7 +187,7 @@[m [mapp.controller = (function () {[m
+ [m
+     var attachEditProfileHandler = function (selector) {[m
+         var _this = this;[m
+[31m-        $(selector).on('click', '#save-btn', function() {[m
+[32m+[m[32m        $(selector).on('click', '#save-btn', function () {[m
+             var userId = _this._data.users.getUserData().userId,[m
+                 userEditProfileData = {[m
+                     password: $('#password').val(),[m
+[36m@@ -196,24 +195,24 @@[m [mapp.controller = (function () {[m
+                     about: $('#about').val(),[m
+                     gender: $('input[name="gender-radio"]:checked').val(),[m
+                     picture: $('#picture').attr('data-picture-data')[m
+[31m-            };[m
+[32m+[m[32m                };[m
+ [m
+             _this._data.users.editProfile(userId, userEditProfileData)[m
+[31m-                .then(function(data) {[m
+[32m+[m[32m                .then(function (data) {[m
+                     Noty.success("Profile successfully edited.");[m
+                     redirectTo('#/');[m
+                 },[m
+[31m-                function(error) {[m
+[32m+[m[32m                function (error) {[m
+                     Noty.error("Error saving changes. Please try again.");[m
+                 });[m
+         });[m
+ [m
+[31m-        $(selector).on('click', '.cancel-btn', function() {[m
+[32m+[m[32m        $(selector).on('click', '.cancel-btn', function () {[m
+             redirectTo('#/');[m
+         });[m
+     }[m
+ [m
+[31m-    var attachLoginHandler = function (selector,data) {[m
+[32m+[m[32m    var attachLoginHandler = function (selector, data) {[m
+ [m
+         var _data = data;[m
+         var _this = this;[m
+[36m@@ -236,7 +235,7 @@[m [mapp.controller = (function () {[m
+         });[m
+     }[m
+ [m
+[31m-    var attachRegisterHandler = function (selector,data) {[m
+[32m+[m[32m    var attachRegisterHandler = function (selector, data) {[m
+ [m
+ [m
+         $(selector).on('click', '#reg-btn', function () {[m
+[36m@@ -249,18 +248,18 @@[m [mapp.controller = (function () {[m
+                 email: $('#reg-email').val()[m
+             };[m
+ [m
+[31m-            if($('#repeat-password').val() !== userRegData.password){[m
+[32m+[m[32m            if ($('#repeat-password').val() !== userRegData.password) {[m
+                 Noty.error("passwords do not match");[m
+             }[m
+[31m-            else{[m
+[31m-            data.users.register(userRegData)[m
+[31m-                .then(function (data) {[m
+[31m-                    Noty.success("Registration successful.");[m
+[31m-                    redirectTo('#/login');[m
+[31m-                },[m
+[31m-                function (error) {[m
+[31m-                    Noty.error("Your registration has encountered an error.");[m
+[31m-                });[m
+[32m+[m[32m            else {[m
+[32m+[m[32m                data.users.register(userRegData)[m
+[32m+[m[32m                    .then(function (data) {[m
+[32m+[m[32m                        Noty.success("Registration successful.");[m
+[32m+[m[32m                        redirectTo('#/login');[m
+[32m+[m[32m                    },[m
+[32m+[m[32m                    function (error) {[m
+[32m+[m[32m                        Noty.error("Your registration has encountered an error.");[m
+[32m+[m[32m                    });[m
+             }[m
+         });[m
+ [m
+[36m@@ -273,41 +272,49 @@[m [mapp.controller = (function () {[m
+         return timestamp.getDate() + '-' + months[timestamp.getMonth()] + '-' + timestamp.getFullYear()[m
+             + ' ' + timestamp.getHours() + ':' + timestamp.getMinutes();[m
+     }[m
+[31m-    [m
+[32m+[m
+     // Keep this method[m
+     function redirectTo(url) {[m
+         window.location = url;[m
+     }[m
+ [m
+[31m-    var LogController = (function() {[m
+[31m-        function LogController(data){[m
+[32m+[m
+[32m+[m[32m    var LogController = (function () {[m
+[32m+[m[32m        function LogController(data) {[m
+             this._data = data[m
+         }[m
+ [m
+         LogController.prototype.loadRegister = function (selector) {[m
+             var data = this._data;[m
+[31m-            $(selector).load('./views/log/register.html',function(){[m
+[31m-                attachRegisterHandler(selector,data)[m
+[32m+[m[32m            $(selector).load('./views/log/register.html', function () {[m
+[32m+[m[32m                attachRegisterHandler(selector, data)[m
+             });[m
+         }[m
+ [m
+         LogController.prototype.loadLogin = function (selector) {[m
+             var data = this._data;[m
+[31m-            $(selector).load('./views/log/login.html', function(){[m
+[31m-                attachLoginHandler(selector,data);[m
+[32m+[m[32m            $(selector).load('./views/log/login.html', function () {[m
+[32m+[m[32m                attachLoginHandler(selector, data);[m
+             });[m
+         }[m
+ [m
+         LogController.prototype.logout = function (selector) {[m
+[31m-            this._data.users.logout()[m
+[31m-            .then([m
+[31m-                function(data){[m
+[31m-                    Noty.success("Successfully logged out.");[m
+[31m-                    redirectTo('#/login');[m
+[31m-                },[m
+[31m-                function(error){[m
+[31m-                    Noty.error("Error logging out.");[m
+[31m-                });[m
+[32m+[m[32m            if (!this._data.users.isLogged()) {[m
+[32m+[m[32m                Noty.error("You must be logged in first to logout")[m
+[32m+[m[32m                redirectTo('#/login');[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                this._data.users.logout()[m
+[32m+[m[32m                    .then([m
+[32m+[m[32m                    function (data) {[m
+[32m
