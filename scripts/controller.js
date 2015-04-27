@@ -860,6 +860,7 @@ app.controller = (function () {
                 function (data) {
                     var comments = data['results'];
                     comments.forEach(function (comment) {
+                        comment['createdAt'] = formatDate(comment['createdAt']);
                         if (comment['ACL'][userId] && comment['ACL'][userId]['write']) {
                             comment['showButtons'] = true;
                         }

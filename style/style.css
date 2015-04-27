@@ -1,11 +1,11 @@
 ul {
     list-style: none;
 }
-form {
+/*form {
     width: 500px;
     margin-left  : 20em;
 
-}
+}*/
 
 #photos-list img {
     height: 140px;
@@ -21,4 +21,60 @@ form {
     margin-top: 80px;
 }
 
+.comment {
+    min-height: 85px;
+}
 
+.comment-info {
+    float: left;
+    width: 80%;
+    overflow: hidden;
+}
+
+.comment button {
+    position: absolute;
+    bottom: 12px;
+    right: 5px;
+}
+
+.comment-info>a {
+    display: block;
+    position: absolute;
+    bottom: 5px;
+}
+
+.category {
+    height: 55px;
+}
+
+.category button {
+    float: right;
+    margin-right: 5px;
+}
+
+.category-info {
+    float: left;
+    width: 50%;
+}
+
+.category-name {
+    margin-top: 5px;
+}
+
+.album {
+    height: 55px;
+}
+
+.album button {
+    float: right;
+    margin-right: 5px;
+}
+
+.album-info {
+    float: left;
+    width: 50%;
+}
+
+.album-name {
+    margin-top: 5px;
+}

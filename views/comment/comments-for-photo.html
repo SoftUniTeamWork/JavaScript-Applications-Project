@@ -1,16 +1,19 @@
-<h3>Comments: </h3>
-<ul id="comments-list">
+<div class="page-header">
+    <h3>Comments: </h3>
+</div>
+<ul id="comments-list" class="list-group">
     {{#results}}
-    <li class="comment">
+    <li class="comment list-group-item clearfix">
         <div class="comment-info">
             <p class="comment-content">{{content}}</p>
             <a href="#/users/{{#userId}}{{objectId}}{{/userId}}"><p class="comment-author">author: {{#userId}}{{username}}{{/userId}}</p></a>
         </div>
         {{#showButtons}}
         <a href="#/comments/delete/{{objectId}}/{{#photoId}}{{objectId}}{{/photoId}}">
-            <button class="delete-button">Delete</button>
+            <button class="delete-button btn btn-danger btn-xs">Delete</button>
         </a>
         {{/showButtons}}
+        <span>{{createdAt}}</span>
     </li>
     {{/results}}
 </ul>

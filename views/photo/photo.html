@@ -1,9 +1,15 @@
-<div id="photo-wrapper">
+<div id="photo-wrapper" class="col-xs-6 col-xs-offset-3">
     <section id="picture"></section>
     <section id="likes"></section>
+    <section>
     <form action="#/comments/create/{{photoId}}" method="POST">
-        <textarea name="content"></textarea>
-        <input type="submit"/>
+        <div>
+            <textarea name="content" class="col-xs-12"></textarea>
+        </div>
+        <div>
+        <input type="submit" class="btn btn-success col-xs-12" value="Add comment"/>
+        </div>
     </form>
+    </section>
     <section id="comments"></section>
 </div>
