@@ -1,10 +1,10 @@
 <nav class="navbar navbar-inverse col-lg-12 navbar-fixed-top" role="navigation">
     <ul class="nav navbar-nav">
-        <li><a href="#/users/home/{{userId}}">Home</a></li>
-        <li><a href="#/users/{{userId}}">{{username}}</a></li>
-        <li><a href="#/categories/showall/{{userId}}">Categories</a></li>
-        <li><a href="#/albums/new">Add album</a></li>
-        <li><a href="#/users/showall/1">All users</a></li>
+        <li class="{{#activeTab}}{{#home}}active{{/home}}{{/activeTab}}"><a href="#/users/home/{{userId}}">Home</a></li>
+        <li class="{{#activeTab}}{{#profile}}active{{/profile}}{{/activeTab}}"><a href="#/users/{{userId}}">{{username}}</a></li>
+        <li class="{{#activeTab}}{{#categories}}active{{/categories}}{{/activeTab}}"><a href="#/categories/showall/{{userId}}">Categories</a></li>
+        <li class="{{#activeTab}}{{#newAlbum}}active{{/newAlbum}}{{/activeTab}}"><a href="#/albums/new">Add album</a></li>
+        <li class="{{#activeTab}}{{#users}}active{{/users}}{{/activeTab}}"><a href="#/users/showall/1">All users</a></li>
         <li><a href="#/logout">Log out</a></li>
     </ul>
 </nav>

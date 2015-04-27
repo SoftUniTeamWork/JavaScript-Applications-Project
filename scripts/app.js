@@ -15,12 +15,12 @@ var app = app || {};
         // Category routes
 
         this.get('#/login', function () {
-            controllers.navigationController.showDefaultNavigation(headerSelector);
+            controllers.navigationController.showDefaultNavigation({login: true}, headerSelector);
             controllers.logController.loadLogin(mainSelector);
         });
 
         this.get('#/register', function () {
-            controllers.navigationController.showDefaultNavigation(headerSelector);
+            controllers.navigationController.showDefaultNavigation({register: true}, headerSelector);
             controllers.logController.loadRegister(mainSelector);
 
         });
@@ -37,7 +37,7 @@ var app = app || {};
         });
 
         this.get('#/categories/showall/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({categories: true}, headerSelector);
             controllers.categoryController.showCategories(this.params['id'], mainSelector);
         });
 
@@ -65,25 +65,25 @@ var app = app || {};
 
         //User routes
         this.get('#/users/showall/:page', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({users: true}, headerSelector);
             controllers.userController.showAllUsers(this.params['page'], mainSelector);
         });
 
         this.get('#/users/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({profile: true}, headerSelector);
             controllers.userController.showProfile(this.params['id'], mainSelector);
         });
 
         this.get('#/users/home/:id', function () {
             $(mainSelector).html('');
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({home: true}, headerSelector);
             controllers.userController.showTopPhotosOfUser(this.params['id'], mainSelector);
             controllers.userController.showTopPhotosOfAllUsers(mainSelector)
         });
 
         // Album routes
         this.get('#/albums/new', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({newAlbum: true}, headerSelector);
             controllers.albumController.new(mainSelector);
         });
 
