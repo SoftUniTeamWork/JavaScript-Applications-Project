@@ -5,6 +5,7 @@
             <label for="album-name"></label>
             <input type="text" name="album-name" id="album-name" value="{{name}}">
             <input type="submit" value="Edit"/>
+            <input type="hidden" value="{{#categoryId}}{{objectId}}{{/categoryId}}" name="category-id">
         </fieldset>
     </form>
 </div>

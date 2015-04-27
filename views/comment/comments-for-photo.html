@@ -7,7 +7,7 @@
             <a href="#/users/{{#userId}}{{objectId}}{{/userId}}"><p class="comment-author">author: {{#userId}}{{username}}{{/userId}}</p></a>
         </div>
         {{#showButtons}}
-        <a href="#/comments/delete/{{objectId}}">
+        <a href="#/comments/delete/{{objectId}}/{{#photoId}}{{objectId}}{{/photoId}}">
             <button class="delete-button">Delete</button>
         </a>
         {{/showButtons}}

@@ -312,7 +312,7 @@ app.data = (function () {
         }
 
         CommentsRepository.prototype.getCommentsByPhotoId = function(id) { 
-            return this._ajaxRequester.get(this._serviceUrl + '?where={"photoId":{"__type": "Pointer","className": "Photo","objectId": "' + id + '"}}&include=userId',
+            return this._ajaxRequester.get(this._serviceUrl + '?where={"photoId":{"__type": "Pointer","className": "Photo","objectId": "' + id + '"}}&include=userId&order=createdAt',
                 credentials.getHeaders());
         }
 

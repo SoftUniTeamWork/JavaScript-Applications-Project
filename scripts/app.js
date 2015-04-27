@@ -102,9 +102,9 @@ var app = app || {};
             controllers.albumController.update(this.params);
         });
 
-        this.get('#/albums/delete/:id', function () {
+        this.get('#/albums/delete/:id/:categoryId', function () {
             controllers.navigationController.showProfileNavigation(headerSelector);
-            controllers.albumController.delete(this.params['id']);
+            controllers.albumController.delete(this.params['id'], this.params['categoryId']);
         });
 
         this.get('#/albums/:categoryId', function () {
@@ -128,27 +128,30 @@ var app = app || {};
             controllers.photoController.showPhotosFromAlbum(this.params['albumId'], this.params['page'], mainSelector);
         });
 
-        this.get('#/photos/delete/:id', function () {
+        this.get('#/photos/delete/:id/:albumId', function () {
             controllers.navigationController.showProfileNavigation(headerSelector);
-            controllers.photoController.delete(this.params['id']);
+            controllers.photoController.delete(this.params['id'], this.params['albumId']);
         });
 
         this.get('#/photos/show/:id', function () {
-            $(mainSelector).html('');
             controllers.navigationController.showProfileNavigation(headerSelector);
-            controllers.photoController.showPhoto(this.params['id'], mainSelector);
-            controllers.commentController.showCommentsForPhoto(this.params['id'], mainSelector)
+            controllers.photoController.showPhotoTemplate(this.params['id'], mainSelector);
+            controllers.photoController.showPhoto(this.params['id'], '#picture');
+            app.router.runRoute('get', '#/comments/show/' + this.params['id']);
+            app.router.runRoute('get', '#/likes/show/' + this.params['id']);
         });
 
         // Comments routes
         this.post('#/comments/create/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
             controllers.commentController.create(this.params);
         });
 
-        this.get('#/comments/delete/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
-            controllers.commentController.delete(this.params['id']);
+        this.get('#/comments/delete/:id/:photoId', function () {
+            controllers.commentController.delete(this.params['id'], this.params['photoId']);
+        });
+
+        this.get('#/comments/show/:photoId', function () {
+            controllers.commentController.showCommentsForPhoto(this.params['photoId'], '#comments');
         });
 
         // Likes routes
@@ -157,16 +160,15 @@ var app = app || {};
             controllers.likeController.create(this.params['id']);
         });
 
-        this.get('#/likes/delete/:id', function () {
+        this.get('#/likes/delete/:id/:photoId', function () {
             controllers.navigationController.showProfileNavigation(headerSelector);
-            controllers.likeController.delete(this.params['id']);
+            controllers.likeController.delete(this.params['id'], this.params['photoId']);
+        });
+
+        this.get('#/likes/show/:photoId', function () {
+            controllers.likeController.showLikes(this.params['photoId'], '#likes');
         });
     });
 
     app.router.run('#/login');
 }());
-
-
-// var a = {userId, userId};
-//             this._data.functionsRepository.execute('getMostLikedUserPhotos', a)
-//                 .then(function(data) {console.log(data);}, function(error) {console.log(error);});

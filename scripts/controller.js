@@ -350,6 +350,8 @@ app.controller = (function () {
             this._data.users.getById(userId)
                 .then(
                 function(data) {
+                    data['createdAt'] = formatDate(data['createdAt']);
+
                     $.get('./views/user/user-profile.html', function (view) {
                             output = Mustache.render(view, data);
                             $(selector).html(output);
@@ -560,7 +562,7 @@ app.controller = (function () {
             this._data.albumsRepository.add(albumData, userId) 
                 .then(
                 function(data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    redirectTo('#/albums/' + params['category-id']);
                     Noty.success('Album successfully added.');
                 }, 
                 function(erorr) {
@@ -589,18 +591,18 @@ app.controller = (function () {
 
             this._data.albumsRepository.updateAlbum(params['id'], albumData)
                 .then(function(data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    redirectTo('#/albums/' + params['category-id']);
                 }, 
                 function(erorr) {
                     Noty.error('Error updating album.');
                 })
         }
 
-        AlbumController.prototype.delete = function(id) {
+        AlbumController.prototype.delete = function(id, categoryId) {
             var userId = this._data.users.getUserData().userId;
             this._data.albumsRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    redirectTo('#/albums/' + categoryId);
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting album.');
@@ -621,6 +623,14 @@ app.controller = (function () {
         var PHOTOS_PER_PAGE = 5,
             PHOTO_MAX_SIZE = 5242880;
 
+        PhotoController.prototype.showPhotoTemplate = function(photoId, selector) {
+            $.get('./views/photo/photo.html', function (view) {
+                data = {photoId: photoId};
+                output = Mustache.render(view, data);
+                $(selector).html(output);
+            });
+        }
+
         PhotoController.prototype.showPhoto = function(id, selector) {
             var userId = this._data.users.getUserData().userId,
                 photoData = {},
@@ -634,25 +644,16 @@ app.controller = (function () {
                     if(data['ACL'][userId] && data['ACL'][userId]['write']) {
                         photoData['photo']['showButtons'] = true;
                     }
+
+                    $.get('./views/photo/show-photo.html', function (view) {
+                        output = Mustache.render(view, photoData);
+                        $(selector).html(output);
+                    });
+
                 },
                 function(error){
                     Noty.error("Error loading photo.")
-                }
-                ).then(
-                function(){
-                    _this._data.functionsRepository.execute('likesCount', {photoId: id, userId: userId})
-                        .then(
-                            function(d){
-                                photoData['likes'] = d['result'];
-                                $.get('./views/photo/show-photo.html', function (view) {
-                                    output = Mustache.render(view, photoData);
-                                    $(selector).prepend(output);
-                                });
-                            }, 
-                            function(error){
-                                console.log(error);
-                            });
-                });
+                });       
         }
 
         PhotoController.prototype.showPhotosFromAlbum = function(id, page, selector) {
@@ -729,7 +730,7 @@ app.controller = (function () {
                     .then(
                         function(data){
                             Noty.success('Photo successfully added.');
-                            redirectTo('#/categories/showall/' + userId);
+                            redirectTo('#/photos/show/' + data['objectId']);
                         },
                         function(data){
                             Noty.error('Error adding photo.');
@@ -740,11 +741,10 @@ app.controller = (function () {
                 })      
         }
 
-        PhotoController.prototype.delete = function(id) {
-            var userId = this._data.users.getUserData().userId;
+        PhotoController.prototype.delete = function(id, albumId) {
             this._data.photosRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    redirectTo('#/photos/showalbum/' + albumId + '/1');
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting album.');
@@ -776,7 +776,7 @@ app.controller = (function () {
 
                     $.get('./views/comment/comments-for-photo.html', function (view) {
                             output = Mustache.render(view, data);
-                            $(selector).append(output);
+                            $(selector).html(output);
                         });
                 },
                 function(error) {
@@ -796,7 +796,7 @@ app.controller = (function () {
             this._data.commentsRepository.add(commentData, userId) 
                 .then(
                 function(data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    redirectTo('#/comments/show/' + params['id']);
                     Noty.success('Comment successfully added.');
                 }, 
                 function(erorr) {
@@ -804,11 +804,10 @@ app.controller = (function () {
                 })   
         }
 
-        CommentController.prototype.delete = function(id) {
-            var userId = this._data.users.getUserData().userId;
+        CommentController.prototype.delete = function(id, photoId) {
             this._data.commentsRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    redirectTo('#/comments/show/' + photoId);
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting comment.');
@@ -835,23 +834,42 @@ app.controller = (function () {
             this._data.likesRepository.add(likeData, userId) 
                 .then(
                 function(data) {
-                    redirectTo('#/categories/showall/' + userId);
-                    Noty.success('Like successfully added.');
+                    redirectTo('#/likes/show/' + id);
+                    Noty.success('Like successfully submitted.');
                 }, 
                 function(erorr) {
-                    Noty.error('Error creating like.');
+                    Noty.error('Error submitting like.');
                 })   
         }
 
-        LikeController.prototype.delete = function(id) {
+        LikeController.prototype.delete = function(id, photoId) {
             var userId = this._data.users.getUserData().userId;
             this._data.likesRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    redirectTo('#/likes/show/' + photoId);
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting like.');
                 })
+        }
+
+        LikeController.prototype.showLikes = function(photoId, selector) {
+            var userId = this._data.users.getUserData().userId;
+
+            this._data.functionsRepository.execute('likesCount', {photoId: photoId, userId: userId})
+                .then(
+                    function(data){
+                        var likesData = {};
+                        likesData['likes'] = data['result'];
+                        likesData['photoId'] = photoId;
+                        $.get('./views/like/likes-for-photo.html', function (view) {
+                            output = Mustache.render(view, likesData);
+                            $(selector).html(output);
+                        });
+                    }, 
+                    function(error){
+                        console.log(error);
+                    });
         }
 
         return LikeController;

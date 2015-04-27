@@ -1,0 +1,14 @@
+<div class="likes-info">
+    <span>Likes: {{#likes}}{{likes}}{{/likes}}</span>
+    {{#likes}}
+        {{#likedPhoto}}
+            {{#liked}}
+            <a href="#/likes/delete/{{likeId}}/{{photoId}}">Dislike this photo</a>
+            {{/liked}}
+
+            {{^liked}}
+            <a href="#/likes/create/{{photoId}}">Like this photo</a>
+            {{/liked}}
+        {{/likedPhoto}}
+    {{/likes}}
+</div>

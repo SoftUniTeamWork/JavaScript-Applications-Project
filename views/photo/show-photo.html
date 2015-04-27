@@ -1,10 +1,11 @@
 {{#photo}}
+{{#albumId}}<a href="#/photos/showalbum/{{objectId}}/1">Back to album</a>{{/albumId}}
 <div class="photo-info">
     <p class="photo-name">{{name}}</p>
     <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
 </div>
 {{#showButtons}}
-<a href="#/photos/delete/{{objectId}}">
+<a href="#/photos/delete/{{objectId}}/{{#albumId}}{{objectId}}{{/albumId}}">
     <button class="delete-button">Delete</button>
 </a>
 {{/showButtons}}
@@ -12,21 +13,3 @@
     <button>Download</button>
 </a>
 {{/photo}}
-<div class="likes-info">
-    <span>Likes: {{#likes}}{{likes}}{{/likes}}</span>
-    {{#likes}}
-        {{#likedPhoto}}
-            {{#liked}}
-            <a href="#/likes/delete/{{likeId}}">Dislike this photo</a>
-            {{/liked}}
-
-            {{^liked}}
-            <a href="#/likes/create/{{#photo}}{{objectId}}{{/photo}}">Like this photo</a>
-            {{/liked}}
-        {{/likedPhoto}}
-    {{/likes}}
-</div>
-<form action="#/comments/create/{{#photo}}{{objectId}}{{/photo}}" method="POST">
-    <textarea name="content"></textarea>
-    <input type="submit"/>
-</form>
