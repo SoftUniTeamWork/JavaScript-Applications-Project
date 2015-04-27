@@ -27,12 +27,12 @@ var app = app || {};
 
 
         this.get('#/categories/new', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.categoryController.new(mainSelector);
         });
 
         this.post('#/categories/create', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.categoryController.create(this.params);
         });
 
@@ -42,24 +42,24 @@ var app = app || {};
         });
 
         this.get('#/categories/edit/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.categoryController.edit(this.params['id'], mainSelector);
         });
 
         this.put('#/categories/update/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.categoryController.update(this.params);
         });
 
         this.get('#/categories/delete/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.categoryController.delete(this.params['id']);
         });
 
         //user control
 
         this.get('#/logout', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.logController.logout(mainSelector);
         });
 
@@ -70,7 +70,8 @@ var app = app || {};
         });
 
         this.get('#/users/:id', function () {
-            controllers.navigationController.showProfileNavigation({profile: true}, headerSelector);
+            var profile = data.users.getUserData().userId === this.params['id'];
+            controllers.navigationController.showProfileNavigation({profile: profile}, headerSelector);
             controllers.userController.showProfile(this.params['id'], mainSelector);
         });
 
@@ -88,53 +89,53 @@ var app = app || {};
         });
 
         this.post('#/albums/create', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.albumController.create(this.params);
         });
 
         this.get('#/albums/edit/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.albumController.edit(this.params['id'], mainSelector);
         });
 
         this.put('#/albums/update/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.albumController.update(this.params);
         });
 
         this.get('#/albums/delete/:id/:categoryId', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.albumController.delete(this.params['id'], this.params['categoryId']);
         });
 
         this.get('#/albums/:categoryId', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.albumController.showAlbumsFromCategory(this.params['categoryId'], mainSelector);
         });
 
         // Photos routes
         this.get('#/photos/new/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.photoController.new(this.params['id'], mainSelector);
         });
 
         this.post('#/photos/create/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.photoController.create(this.params);
         });
 
         this.get('#/photos/showalbum/:albumId/:page', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.photoController.showPhotosFromAlbum(this.params['albumId'], this.params['page'], mainSelector);
         });
 
         this.get('#/photos/delete/:id/:albumId', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.photoController.delete(this.params['id'], this.params['albumId']);
         });
 
         this.get('#/photos/show/:id', function () {
-            controllers.navigationController.showProfileNavigation(headerSelector);
+            controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.photoController.showPhotoTemplate(this.params['id'], mainSelector);
             controllers.photoController.showPhoto(this.params['id'], '#picture');
             app.router.runRoute('get', '#/comments/show/' + this.params['id']);
