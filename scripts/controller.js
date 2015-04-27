@@ -688,7 +688,7 @@ app.controller = (function () {
             this._data = data;
         }
 
-        var PHOTOS_PER_PAGE = 5,
+        var PHOTOS_PER_PAGE = 12,
             PHOTO_MAX_SIZE = 5242880;
 
         PhotoController.prototype.showPhotoTemplate = function(photoId, selector) {

@@ -1,12 +1,14 @@
-<h3>Most liked photos: </h3>
-<ul id="photos-list" class="list-inline">
-    {{#result}}
-    <li class="album">
-        <a href="#/photos/show/{{objectId}}">    
-            <div class="photo-info">
-                <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
-            </div>
-        </a>
-    </li>
-    {{/result}}
-</ul>
+<h3 class="col-xs-8 col-xs-offset-2">Most liked photos: </h3>
+<div class="col-xs-8 col-xs-offset-2">
+    <ul id="photos-list" class="list-inline">
+        {{#result}}
+        <li class="col-xs-2">
+            <a href="#/photos/show/{{objectId}}">    
+                <div class="photo-info">
+                    <p class="photo">{{#picture}}<img src="{{url}}" class="img-thumbnail">{{/picture}}</p>
+                </div>
+            </a>
+        </li>
+        {{/result}}
+    </ul>
+</div>

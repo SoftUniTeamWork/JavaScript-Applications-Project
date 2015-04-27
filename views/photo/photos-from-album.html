@@ -1,28 +1,36 @@
-<h2>
-{{#results.0}}
-    {{#albumId}}
-        {{name}}
-    {{/albumId}}
-{{/results.0}}
-</h2>
-<h3>Photos: </h3>
-<ul id="photos-list" class="list-inline">
-    {{#results}}
-    <li class="album">
-        <a href="#/photos/show/{{objectId}}">    
-            <div class="photo-info">
-                <p class="photo">{{#picture}}<img src="{{url}}">{{/picture}}</p>
-            </div>
-        </a>
-        {{#showButtons}}
-        <a href="#/photos/delete/{{objectId}}/{{#albumId}}{{objectId}}{{/albumId}}">
-            <button class="delete-button">Delete</button>
-        </a>
-        {{/showButtons}}
-    </li>
-    {{/results}}
-</ul>
+<div class="page-header">
+    <h1 class="col-xs-offset-2">
+    {{#results.0}}
+        {{#albumId}}
+            {{name}}
+        {{/albumId}}
+    {{/results.0}}
+    </h1>
+</div>
+<h3 class="col-xs-8 col-xs-offset-2">Photos: </h3>
+<div class="col-xs-8 col-xs-offset-2">
+    <ul id="photos-list" class="list-inline">
+        {{#results}}
+        <li class="col-xs-2">
+            <a href="#/photos/show/{{objectId}}">    
+                <div class="photo-info">
+                    <p class="photo">{{#picture}}<img src="{{url}}" class="img-thumbnail">{{/picture}}</p>
+                </div>
+            </a>
+            {{#showButtons}}
+            <a href="#/photos/delete/{{objectId}}/{{#albumId}}{{objectId}}{{/albumId}}">
+                <button class="delete-button btn btn-danger btn-xs">Delete</button>
+            </a>
+            {{/showButtons}}
+        </li>
+        {{/results}}
+    </ul>
+</div>
 {{#pageInfo}}
-    <a href="#/photos/showalbum/{{#results.0}}{{#albumId}}{{objectId}}{{/albumId}}{{/results.0}}/{{prevPage}}}">prev</a>
-    <a href="#/photos/showalbum/{{#results.0}}{{#albumId}}{{objectId}}{{/albumId}}{{/results.0}}/{{nextPage}}}">next</a>
+<div class="col-xs-8 col-xs-offset-2">
+    <ul class="pager">
+        <li class="previous"><a href="#/photos/showalbum/{{#results.0}}{{#albumId}}{{objectId}}{{/albumId}}{{/results.0}}/{{prevPage}}}">prev</a></li>
+        <li class="next"><a href="#/photos/showalbum/{{#results.0}}{{#albumId}}{{objectId}}{{/albumId}}{{/results.0}}/{{nextPage}}}">next</a></li>
+    </ul>
+</div>
 {{/pageInfo}}

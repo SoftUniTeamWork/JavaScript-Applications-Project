@@ -45,7 +45,7 @@ Parse.Cloud.define('getMostLikedUserPhotos', function(request, response) {
   var photoQuery = new Parse.Query(Photo);
   photoQuery.matchesQuery('albumId', albumQuery);
   photoQuery.descending('likes');
-  photoQuery.limit(5);
+  photoQuery.limit(6);
 
   photoQuery.find({
     success: function(results) {
@@ -61,7 +61,7 @@ Parse.Cloud.define('getMostLikedPhotos', function(request, response) {
   var Photo = Parse.Object.extend('Photo');
   var photoQuery = new Parse.Query(Photo);
   photoQuery.descending('likes');
-  photoQuery.limit(5);
+  photoQuery.limit(6);
 
   photoQuery.find({
     success: function(results) {

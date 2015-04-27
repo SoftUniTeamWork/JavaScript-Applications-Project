@@ -6,3 +6,19 @@ form {
     margin-left  : 20em;
 
 }
+
+#photos-list img {
+    height: 140px;
+    width: 100%;
+    overflow: hidden;
+}
+
+#photos-list li {
+    margin-bottom: 10px;
+}
+
+#wrapper {
+    margin-top: 80px;
+}
+
+

@@ -1,23 +1,33 @@
-<h3>Categories: </h3>
-{{#results.0}}{{#showButtons}}
-<a href="#/categories/new">Add category</a>
-{{/showButtons}}{{/results.0}}
-<ul id="categories-list">
+<div class="page-header">
+    <h1 class="col-xs-offset-2">
+        Categories
+    </h1>
+</div>
+{{#results.0}}
+{{#showButtons}}
+<p>
+    <a href="#/categories/new">
+        <button class="btn btn-success col-xs-offset-2">Add category</button>
+    </a>
+</p>
+{{/showButtons}}
+{{/results.0}}
+<ul id="categories-list" class="list-group col-xs-6 col-xs-offset-2">
     {{#results}}
-    <li class="category" data-id="{{objectId}}" data-name="{{name}}">
+    <li class="category list-group-item">
         <div class="category-info">
             <p class="category-name">{{name}}</p>
         </div>
         {{#showButtons}}
         <a href="#/categories/edit/{{objectId}}">
-            <button class="edit-button">Edit</button>
+            <button class="edit-button btn btn-warning">Edit</button>
         </a>
         <a href="#/categories/delete/{{objectId}}">
-            <button class="delete-button">Delete</button>
+            <button class="delete-button btn btn-danger">Delete</button>
         </a>
         {{/showButtons}}
         <a href="#/albums/{{objectId}}">
-            <button class="show-button">Show albums</button>
+            <button class="show-button btn btn-primary">Show albums</button>
         </a>
     </li>
     {{/results}}
