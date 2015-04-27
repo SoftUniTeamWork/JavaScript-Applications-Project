@@ -138,8 +138,8 @@ var app = app || {};
             controllers.navigationController.showProfileNavigation({}, headerSelector);
             controllers.photoController.showPhotoTemplate(this.params['id'], mainSelector);
             controllers.photoController.showPhoto(this.params['id'], '#picture');
-            app.router.runRoute('get', '#/comments/show/' + this.params['id']);
-            app.router.runRoute('get', '#/likes/show/' + this.params['id']);
+            controllers.commentController.showCommentsForPhoto(this.params['id'], '#comments');
+            controllers.likeController.showLikes(this.params['id'], '#likes');
         });
 
         // Comments routes
@@ -149,10 +149,6 @@ var app = app || {};
 
         this.get('#/comments/delete/:id/:photoId', function () {
             controllers.commentController.delete(this.params['id'], this.params['photoId']);
-        });
-
-        this.get('#/comments/show/:photoId', function () {
-            controllers.commentController.showCommentsForPhoto(this.params['photoId'], '#comments');
         });
 
         // Likes routes
@@ -165,11 +161,6 @@ var app = app || {};
             controllers.navigationController.showProfileNavigation(headerSelector);
             controllers.likeController.delete(this.params['id'], this.params['photoId']);
         });
-
-        this.get('#/likes/show/:photoId', function () {
-            controllers.likeController.showLikes(this.params['photoId'], '#likes');
-        });
-
     });
 
     app.router.run('#/login');

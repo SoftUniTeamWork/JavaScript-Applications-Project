@@ -854,7 +854,6 @@ app.controller = (function () {
         }
 
         CommentController.prototype.showCommentsForPhoto = function (id, selector) {
-
             var userId = this._data.users.getUserData().userId;
             this._data.commentsRepository.getCommentsByPhotoId(id)
                 .then(
@@ -878,8 +877,9 @@ app.controller = (function () {
         }
 
         CommentController.prototype.create = function (params) {
-            var userId = this._data.users.getUserData().userId;
-            var commentData = {
+            var _this = this,
+                userId = this._data.users.getUserData().userId,
+                commentData = {
                 content: params['content'],
                 photoId: {__type: 'Pointer', className: 'Photo', objectId: params['id']},
                 userId: {__type: 'Pointer', className: '_User', objectId: userId}
@@ -888,7 +888,7 @@ app.controller = (function () {
             this._data.commentsRepository.add(commentData, userId)
                 .then(
                 function(data) {
-                    redirectTo('#/comments/show/' + params['id']);
+                    CommentController.prototype.showCommentsForPhoto.call(_this, params['id'], '#comments');
                     Noty.success('Comment successfully added.');
                 },
                 function (erorr) {
@@ -897,9 +897,10 @@ app.controller = (function () {
         }
 
         CommentController.prototype.delete = function(id, photoId) {
+            var _this = this;
             this._data.commentsRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/comments/show/' + photoId);
+                    CommentController.prototype.showCommentsForPhoto.call(_this, photoId, '#comments');
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting comment.');
@@ -917,8 +918,9 @@ app.controller = (function () {
         }
 
         LikeController.prototype.create = function (id) {
-            var userId = this._data.users.getUserData().userId;
-            var likeData = {
+            var _this = this,
+                userId = this._data.users.getUserData().userId,
+                likeData = {
                 photoId: {__type: 'Pointer', className: 'Photo', objectId: id},
                 userId: {__type: 'Pointer', className: '_User', objectId: userId}
             };
@@ -926,7 +928,7 @@ app.controller = (function () {
             this._data.likesRepository.add(likeData, userId)
                 .then(
                 function(data) {
-                    redirectTo('#/likes/show/' + id);
+                    LikeController.prototype.showLikes.call(_this, id, '#likes');
                     Noty.success('Like successfully submitted.');
                 }, 
                 function(erorr) {
@@ -935,10 +937,11 @@ app.controller = (function () {
         }
 
         LikeController.prototype.delete = function(id, photoId) {
-            var userId = this._data.users.getUserData().userId;
+            var _this = this,
+                userId = this._data.users.getUserData().userId;
             this._data.likesRepository.delete(id)
                 .then(function(data) {
-                    redirectTo('#/likes/show/' + photoId);
+                    LikeController.prototype.showLikes.call(_this, photoId, '#likes');
                 }, 
                 function(erorr) {
                     Noty.error('Error deleting like.');
