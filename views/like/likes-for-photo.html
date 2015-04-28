@@ -3,10 +3,10 @@
     {{#likes}}
         {{#likedPhoto}}
             {{#liked}}
-            <a href="#/likes/delete/{{likeId}}/{{photoId}}">Unlike this photo</a>
+            <a href="#/likes/delete/{{likeId}}/{{photoId}}">Unlike this photo <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> </a>
             {{/liked}}
             {{^liked}}
-            <a href="#/likes/create/{{photoId}}">Like this photo</a>
+            <a href="#/likes/create/{{photoId}}">Like this photo <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> </a>
             {{/liked}}
         {{/likedPhoto}}
     {{/likes}}

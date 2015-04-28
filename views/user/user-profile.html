@@ -1,14 +1,24 @@
-<div class="user-info">
-    <p class="user-name">
-        username: <span>{{username}}</span>
-    </p>
-    <p class="user-name">
-        user's join date: <span>{{createdAt}}</span>
-    </p>
-    <p class="user-email">
-        email: <span>{{email}}</span>
-    </p>
-    <p class="user-categories">
-        <a href="#/categories/showall/{{objectId}}">Browse user's photos</a>
-    </p>
+<div class="user-info col-xs-8 col-xs-offset-2">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4>User info</h4>
+        </div>
+        <div class="panel-body">
+            <p>
+                <strong>Username:</strong><br>
+                <span>{{username}}</span>
+            </p>
+            <p>
+                <strong>Registered at:</strong><br>
+                <span>{{createdAt}}</span>
+            </p>
+            <address>
+                <strong>Email:</strong><br>
+                <span>{{email}}</span>
+            </address>
+            <p class="user-categories">
+                <a href="#/categories/showall/{{objectId}}"><button class="btn btn-primary">Browse user's photos</button></a>
+            </p>
+        </div>
+    </div>
 </div>

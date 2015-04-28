@@ -1,11 +1,6 @@
 ul {
     list-style: none;
 }
-/*form {
-    width: 500px;
-    margin-left  : 20em;
-
-}*/
 
 #photos-list img {
     height: 140px;
@@ -40,7 +35,12 @@ ul {
 .comment-info>a {
     display: block;
     position: absolute;
-    bottom: 5px;
+    bottom: 0px;
+}
+
+.comment-content {
+    padding-bottom: 10px;
+    word-wrap: break-word;
 }
 
 .category {
