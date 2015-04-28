@@ -65,7 +65,6 @@ define(['helperFunctions', 'noty'], function (helpers, Noty) {
             var userRegData = {
                 username: $('#reg-username').val(),
                 password: $('#reg-password').val(),
-                repeatPass: $('#repeat-password').val(),
                 email: $('#reg-email').val()
             };
 
