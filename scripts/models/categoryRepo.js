@@ -1,6 +1,4 @@
-var app=app||{};
-
-app.CategoriesRepository = (function() {
+define(['credentials'], function(credentials) {
     var CATEGORIES_URL = 'classes/Category';
 
     function CategoriesRepository(baseUrl, ajaxRequester) {
@@ -33,5 +31,5 @@ app.CategoriesRepository = (function() {
     }
 
     return CategoriesRepository;
-})();
+});
 

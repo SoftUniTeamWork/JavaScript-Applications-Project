@@ -1,16 +1,14 @@
-var app=app||{};
-
-app.CategoryController = (function () {
+define(['helperFunctions', 'noty', 'mustache'], function (helpers, Noty, Mustache) {
     function CategoryController(data) {
         this._data = data;
     }
 
     CategoryController.prototype.showCategories = function (userId, selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in to view your categories!")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
-            var currentUserId = this._data.users.getUserData().userId;
+            var currentUserId = this._data.usersRepository.getUserData().userId;
 
             this._data.categoriesRepository.getCategoriesByUserId(userId)
                 .then(
@@ -33,21 +31,22 @@ app.CategoryController = (function () {
             );
         }
     }
+    
     CategoryController.prototype.new = function (selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to create category!")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
             $(selector).load('./views/category/new-category.html');
         }
     }
 
     CategoryController.prototype.create = function (params) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first create category")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
-            var userId = this._data.users.getUserData().userId;
+            var userId = this._data.usersRepository.getUserData().userId;
             var categoryData = {
                 name: params['category-name'],
                 userId: {__type: 'Pointer', className: '_User', objectId: userId}
@@ -56,7 +55,7 @@ app.CategoryController = (function () {
             this._data.categoriesRepository.add(categoryData, userId)
                 .then(
                 function (data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    helpers.redirectTo('#/categories/showall/' + userId);
                     Noty.success('Category successfully added.');
                 },
                 function (erorr) {
@@ -66,9 +65,9 @@ app.CategoryController = (function () {
     }
 
     CategoryController.prototype.edit = function (id, selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to edit category!")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
             this._data.categoriesRepository.getById(id)
                 .then(function (data) {
@@ -84,38 +83,40 @@ app.CategoryController = (function () {
     }
 
     CategoryController.prototype.update = function (params) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to update category")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
-            var userId = this._data.users.getUserData().userId;
+            var userId = this._data.usersRepository.getUserData().userId;
             categoryData = {
                 name: params['category-name']
             }
 
             this._data.categoriesRepository.updateCategory(params['id'], categoryData)
                 .then(function (data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    helpers.redirectTo('#/categories/showall/' + userId);
                 },
                 function (erorr) {
                     Noty.error('Error updating category.');
                 })
         }
     }
+
     CategoryController.prototype.delete = function (id) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to delete category!")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
-            var userId = this._data.users.getUserData().userId;
+            var userId = this._data.usersRepository.getUserData().userId;
             this._data.categoriesRepository.delete(id)
                 .then(function (data) {
-                    redirectTo('#/categories/showall/' + userId);
+                    helpers.redirectTo('#/categories/showall/' + userId);
                 },
                 function (erorr) {
                     Noty.error('Error deleting category.');
                 })
         }
     }
+
     return CategoryController;
-})();
+});

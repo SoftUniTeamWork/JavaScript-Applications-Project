@@ -1,6 +1,4 @@
-var app = app||{};
-
-app.PhotoController = (function () {
+define(['helperFunctions', 'noty', 'mustache'], function (helpers, Noty, Mustache) {
     function PhotoController(data) {
         this._data = data;
     }
@@ -17,11 +15,11 @@ app.PhotoController = (function () {
     }
 
     PhotoController.prototype.showPhoto = function (id, selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to use this function!")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
-            var userId = this._data.users.getUserData().userId,
+            var userId = this._data.usersRepository.getUserData().userId,
                 photoData = {},
                 _this = this;
 
@@ -45,11 +43,11 @@ app.PhotoController = (function () {
     }
 
     PhotoController.prototype.showPhotosFromAlbum = function (id, page, selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to use this function!")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
-            var userId = this._data.users.getUserData().userId;
+            var userId = this._data.usersRepository.getUserData().userId;
             var page = parseInt(page),
                 nextPage = page + 1,
                 prevPage = page - 1 < 1 ? 1 : page - 1;
@@ -58,7 +56,7 @@ app.PhotoController = (function () {
                 .then(
                 function (data) {
                     if (data['results'].length === 0 && page > 1) {
-                        redirectTo('#/photos/showalbum/' + id + '/' + (page - 1));
+                        helpers.redirectTo('#/photos/showalbum/' + id + '/' + (page - 1));
                     }
 
                     var photos = data['results'];
@@ -82,9 +80,9 @@ app.PhotoController = (function () {
     }
 
     PhotoController.prototype.new = function (id, selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first add photo!")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
             $.get('./views/photo/new-photo.html', function (view) {
                 var data = {
@@ -97,12 +95,12 @@ app.PhotoController = (function () {
     }
 
     PhotoController.prototype.create = function (params) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to use this function")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
             var _this = this,
-                userId = this._data.users.getUserData().userId,
+                userId = this._data.usersRepository.getUserData().userId,
                 picInput = document.getElementById('photoInput'),
                 picture = picInput.files[0],
                 size = picture.size || picture.fileSize,
@@ -132,7 +130,7 @@ app.PhotoController = (function () {
                         .then(
                         function (data) {
                             Noty.success('Photo successfully added.');
-                            redirectTo('#/photos/show/' + data['objectId']);
+                            helpers.redirectTo('#/photos/show/' + data['objectId']);
                         },
                         function (data) {
                             Noty.error('Error adding photo.');
@@ -145,19 +143,20 @@ app.PhotoController = (function () {
     }
 
     PhotoController.prototype.delete = function (id, albumId) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to delete photo")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
-            var userId = this._data.users.getUserData().userId;
+            var userId = this._data.usersRepository.getUserData().userId;
             this._data.photosRepository.delete(id)
                 .then(function (data) {
-                    redirectTo('#/photos/showalbum/' + albumId + '/1');
+                    helpers.redirectTo('#/photos/showalbum/' + albumId + '/1');
                 },
                 function (erorr) {
                     Noty.error('Error deleting photo.');
                 })
         }
     }
+    
     return PhotoController;
-})();
+});

@@ -1,6 +1,4 @@
-var app=app||{}
-
-app.FunctionsRepository = (function() {
+define(['credentials'], function (credentials) {
     var FUNCTION_URL = 'functions/';
 
     function FunctionsRepository(baseUrl, ajaxRequester) {
@@ -13,4 +11,4 @@ app.FunctionsRepository = (function() {
     }
 
     return FunctionsRepository;
-})();
+});

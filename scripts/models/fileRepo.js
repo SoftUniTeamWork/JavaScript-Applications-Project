@@ -1,6 +1,4 @@
-var app = app ||{};
-
-app.FilesRepository = (function() {
+define(['credentials'], function(credentials) {
     var FILE_URL = 'files/';
 
     function FilesRepository(baseUrl, ajaxRequester) {
@@ -15,4 +13,4 @@ app.FilesRepository = (function() {
     }
 
     return FilesRepository;
-})();
+});

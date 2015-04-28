@@ -1,6 +1,4 @@
-var app = app||{};
-
-var credentials = (function () {
+define([], function() {
 
     function getHeaders() {
         var headers = {
@@ -55,4 +53,4 @@ var credentials = (function () {
         getHeaders: getHeaders,
         clearLocalStorage: clearLocalStorage
     }
-}());
+});

@@ -1,6 +1,4 @@
-var app=app||{};
-
-app.AlbumsRepository = (function() {
+define(['credentials'], function (credentials) {
     var ALBUMS_URL = 'classes/Album';
 
     function AlbumsRepository(baseUrl, ajaxRequester) {
@@ -33,5 +31,5 @@ app.AlbumsRepository = (function() {
     }
 
     return AlbumsRepository;
-})();
+});
 

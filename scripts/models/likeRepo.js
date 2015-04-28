@@ -1,6 +1,4 @@
-var app=app||{};
-
-app.LikesRepository = (function() {
+define(['credentials'], function (credentials) {
     var LIKES_URL = 'classes/Like';
 
     function LikesRepository(baseUrl, ajaxRequester) {
@@ -20,4 +18,4 @@ app.LikesRepository = (function() {
     }
 
     return LikesRepository;
-})();
+});

@@ -1,12 +1,10 @@
-var app = app || {};
+define(['ajaxRequester', 'data', 'controllers', 'Sammy'], function(ajaxRequesterModule, dataModule, controllersModule, Sammy) {
+    var app = {};
 
-(function () {
     var baseUrl = "https://api.parse.com/1/";
-    var ajaxRequester = app.ajaxRequester.get();
-    var data = app.data.get(baseUrl, ajaxRequester);
-
-    var controllers = app.controllersRepo.getControllers(data);
-    //controller.attachEventHandlers();
+    var ajaxRequester = ajaxRequesterModule.get();
+    var data = dataModule.get(baseUrl, ajaxRequester);
+    var controllers = controllersModule.getControllers(data);
 
     app.router = Sammy(function () {
         var mainSelector = '#main',
@@ -70,7 +68,7 @@ var app = app || {};
         });
 
         this.get('#/users/:id', function () {
-            var profile = data.users.getUserData().userId === this.params['id'];
+            var profile = data.usersRepository.getUserData().userId === this.params['id'];
             controllers.navigationController.showProfileNavigation({profile: profile}, headerSelector);
             controllers.userController.showProfile(this.params['id'], mainSelector);
         });
@@ -168,5 +166,5 @@ var app = app || {};
 
     });
 
-    app.router.run('#/login');
-}());
+    return app;
+});

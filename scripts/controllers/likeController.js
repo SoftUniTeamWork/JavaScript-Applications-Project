@@ -1,13 +1,11 @@
-var app=app||{};
-
-app.LikeController = (function () {
+define(['noty', 'mustache'], function (Noty, Mustache) {
     function LikeController(data) {
         this._data = data;
     }
 
     LikeController.prototype.create = function (id) {
         var _this = this,
-            userId = this._data.users.getUserData().userId,
+            userId = this._data.usersRepository.getUserData().userId,
             likeData = {
                 photoId: {__type: 'Pointer', className: 'Photo', objectId: id},
                 userId: {__type: 'Pointer', className: '_User', objectId: userId}
@@ -26,7 +24,7 @@ app.LikeController = (function () {
 
     LikeController.prototype.delete = function(id, photoId) {
         var _this = this,
-            userId = this._data.users.getUserData().userId;
+            userId = this._data.usersRepository.getUserData().userId;
         this._data.likesRepository.delete(id)
             .then(function(data) {
                 LikeController.prototype.showLikes.call(_this, photoId, '#likes');
@@ -37,7 +35,7 @@ app.LikeController = (function () {
     }
 
     LikeController.prototype.showLikes = function(photoId, selector) {
-        var userId = this._data.users.getUserData().userId;
+        var userId = this._data.usersRepository.getUserData().userId;
 
         this._data.functionsRepository.execute('likesCount', {photoId: photoId, userId: userId})
             .then(
@@ -56,4 +54,4 @@ app.LikeController = (function () {
     }
 
     return LikeController;
-})();
+});

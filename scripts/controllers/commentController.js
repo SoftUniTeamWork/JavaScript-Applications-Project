@@ -1,18 +1,16 @@
-var app=app||{};
-
-app.CommentController = (function () {
+define(['helperFunctions', 'noty', 'mustache'], function (helpers, Noty, Mustache) {
     function CommentController(data) {
         this._data = data;
     }
 
     CommentController.prototype.showCommentsForPhoto = function (id, selector) {
-        var userId = this._data.users.getUserData().userId;
+        var userId = this._data.usersRepository.getUserData().userId;
         this._data.commentsRepository.getCommentsByPhotoId(id)
             .then(
             function (data) {
                 var comments = data['results'];
                 comments.forEach(function (comment) {
-                    comment['createdAt'] = formatDate(comment['createdAt']);
+                    comment['createdAt'] = helpers.formatDate(comment['createdAt']);
                     if (comment['ACL'][userId] && comment['ACL'][userId]['write']) {
                         comment['showButtons'] = true;
                     }
@@ -31,7 +29,7 @@ app.CommentController = (function () {
 
     CommentController.prototype.create = function (params) {
         var _this = this,
-            userId = this._data.users.getUserData().userId,
+            userId = this._data.usersRepository.getUserData().userId,
             commentData = {
                 content: params['content'],
                 photoId: {__type: 'Pointer', className: 'Photo', objectId: params['id']},
@@ -61,4 +59,4 @@ app.CommentController = (function () {
     }
 
     return CommentController;
-})();
+});

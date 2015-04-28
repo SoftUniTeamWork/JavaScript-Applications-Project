@@ -1,4 +1,4 @@
-var Noty = (function() {
+define(['notyLib'], function (notyLib) {
 
     function display(type, text, time) {
         var n = noty({

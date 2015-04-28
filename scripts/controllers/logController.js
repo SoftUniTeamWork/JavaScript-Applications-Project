@@ -1,6 +1,4 @@
-var app=app||{};
-
-app.LogController = (function () {
+define(['helperFunctions', 'noty'], function (helpers, Noty) {
     function LogController(data) {
         this._data = data
     }
@@ -20,19 +18,17 @@ app.LogController = (function () {
     }
 
     LogController.prototype.logout = function (selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to logout")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
-            this._data.users.logout()
+            this._data.usersRepository.logout()
                 .then(
                 function (data) {
-                    console.log('kur');
                     Noty.success("Successfully logged out.");
-                    redirectTo('#/login');
+                    helpers.redirectTo('#/login');
                 },
                 function (error) {
-                    console.log("kur2");
                     Noty.error("Error logging out.");
                 });
         }
@@ -46,13 +42,12 @@ app.LogController = (function () {
         $(selector).find('#login-btn').click(function () {
             var username = $('#login-username').val(),
                 password = $('#login-password').val();
-            console.log(username);
 
-            data.users.login(username, password)
+            data.usersRepository.login(username, password)
                 .then(function (data) {
-                    _data.users.setUserData(data);
+                    _data.usersRepository.setUserData(data);
                     Noty.success("Successfully logged in.");
-                    redirectTo('#/users/home/' + _data.users.getUserData().userId);
+                    helpers.redirectTo('#/users/home/' + _data.usersRepository.getUserData().userId);
                 },
                 function (error) {
                     Noty.error("Incorrect username/password.");
@@ -70,7 +65,7 @@ app.LogController = (function () {
             var userRegData = {
                 username: $('#reg-username').val(),
                 password: $('#reg-password').val(),
-                //repeatPass: $('#repeat-password').val(),
+                repeatPass: $('#repeat-password').val(),
                 email: $('#reg-email').val()
             };
 
@@ -78,10 +73,10 @@ app.LogController = (function () {
                 Noty.error("passwords do not match");
             }
             else {
-                data.users.register(userRegData)
+                data.usersRepository.register(userRegData)
                     .then(function (data) {
                         Noty.success("Registration successful.");
-                        redirectTo('#/login');
+                        helpers.redirectTo('#/login');
                     },
                     function (error) {
                         Noty.error("Your registration has encountered an error.");
@@ -92,4 +87,4 @@ app.LogController = (function () {
     }
 
     return LogController;
-})();
+});

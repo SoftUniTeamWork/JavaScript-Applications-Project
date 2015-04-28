@@ -1,6 +1,4 @@
-var app=app||{};
-
-app.UserController = (function () {
+define(['helperFunctions', 'noty', 'mustache'], function (helpers, Noty, Mustache) {
     var USERS_PER_PAGE = 10;
 
     function UserController(data) {
@@ -9,19 +7,19 @@ app.UserController = (function () {
 
     UserController.prototype.showAllUsers = function (page, selector) {
 
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in to see all users")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
             var page = parseInt(page),
                 nextPage = page + 1,
                 prevPage = page - 1 < 1 ? 1 : page - 1;
 
-            this._data.users.getAll(USERS_PER_PAGE, page)
+            this._data.usersRepository.getAll(USERS_PER_PAGE, page)
                 .then(
                 function (data) {
                     if (data['results'].length === 0 && page > 1) {
-                        redirectTo('#/users/showall/' + id + '/' + (page - 1));
+                        helpers.redirectTo('#/users/showall/' + id + '/' + (page - 1));
                     }
                     data['pageInfo'] = {nextPage: nextPage, prevPage: prevPage};
 
@@ -39,14 +37,14 @@ app.UserController = (function () {
     }
 
     UserController.prototype.showProfile = function (userId, selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to view profile")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
-            this._data.users.getById(userId)
+            this._data.usersRepository.getById(userId)
                 .then(
                 function (data) {
-                    data['createdAt'] = formatDate(data['createdAt']);
+                    data['createdAt'] = helpers.formatDate(data['createdAt']);
                     $.get('./views/user/user-profile.html', function (view) {
                         output = Mustache.render(view, data);
                         $(selector).html(output);
@@ -60,9 +58,9 @@ app.UserController = (function () {
     }
 
     UserController.prototype.showTopPhotosOfUser = function (userId, selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to see top user photos")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
             var sendData = {userId: userId};
             this._data.functionsRepository.execute('getMostLikedUserPhotos', sendData)
@@ -81,9 +79,9 @@ app.UserController = (function () {
     }
 
     UserController.prototype.showTopPhotosOfAllUsers = function (selector) {
-        if (!this._data.users.isLogged()) {
+        if (!this._data.usersRepository.isLogged()) {
             Noty.error("You must be logged in first to view top photos")
-            redirectTo('#/login');
+            helpers.redirectTo('#/login');
         } else {
             this._data.functionsRepository.execute('getMostLikedPhotos')
                 .then(
@@ -101,4 +99,4 @@ app.UserController = (function () {
     }
 
     return UserController;
-})();
+});

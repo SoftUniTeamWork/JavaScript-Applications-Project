@@ -1,6 +1,4 @@
-var app=app||{};
-
-app.CommentsRepository = (function() {
+define(['credentials'], function(credentials) {
     var COMMENTS_URL = 'classes/Comment';
 
     function CommentsRepository(baseUrl, ajaxRequester) {
@@ -25,4 +23,4 @@ app.CommentsRepository = (function() {
     }
 
     return CommentsRepository;
-})();
+});

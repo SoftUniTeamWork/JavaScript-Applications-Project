@@ -1,6 +1,4 @@
-var app=app||{};
-
-app.NavigationController = (function () {
+define(['mustache'], function (Mustache) {
     function NavigationController(data) {
         this._data = data;
     }
@@ -8,7 +6,7 @@ app.NavigationController = (function () {
     NavigationController.prototype.showProfileNavigation = function (activeTab, selector) {
         var _this = this;
         $.get('./views/navigation/profile-navigation.html', function (view) {
-            var data = _this._data.users.getUserData();
+            var data = _this._data.usersRepository.getUserData();
             data['activeTab'] = activeTab;
             output = Mustache.render(view, data);
             $(selector).html(output);
@@ -24,5 +22,5 @@ app.NavigationController = (function () {
     }
 
     return NavigationController;
-})();
+});
 

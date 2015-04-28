@@ -1,6 +1,4 @@
-var app=app||{};
-
-app.Users = (function (argument) {
+define(['credentials'], function(credentials) {
     var USERS_URL = 'users';
 
     function Users(baseUrl, ajaxRequester) {
@@ -80,4 +78,4 @@ app.Users = (function (argument) {
     }
 
     return Users;
-}());
+});

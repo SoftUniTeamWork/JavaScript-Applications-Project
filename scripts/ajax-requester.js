@@ -1,7 +1,4 @@
-var app = app || {};
-
-app.ajaxRequester = (function() {
-
+define(['Q'], function (Q) {
     function AjaxRequester() {
         this.get = makeGetRequest;
         this.post = makePostRequest;
@@ -53,4 +50,4 @@ app.ajaxRequester = (function() {
             return new AjaxRequester();
         }
     }
-}());
+});

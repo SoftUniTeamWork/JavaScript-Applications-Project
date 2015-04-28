@@ -1,6 +1,4 @@
-var app = app||{};
-
-app.PhotosRepository = (function() {
+define(['credentials'], function (credentials) {
     var PHOTOS_URL = 'classes/Photo';
 
     function PhotosRepository(baseUrl, ajaxRequester) {
@@ -19,8 +17,8 @@ app.PhotosRepository = (function() {
 
     PhotosRepository.prototype.getPhotosByAlbumId = function(id, photosPerPage, page) {
         var skip = (page - 1) * photosPerPage;
-        return this._ajaxRequester.get(this._serviceUrl + '?where={"albumId":{"__type": "Pointer","className": "Album","objectId": "' + id + '"}}&include=albumId&skip=' + skip + '&limit=' + photosPerPage,
-            credentials.getHeaders());
+        return this._ajaxRequester.get(this._serviceUrl + '?where={"albumId":{"__type": "Pointer","className": "Album","objectId": "'
+             + id + '"}}&include=albumId&skip=' + skip + '&limit=' + photosPerPage, credentials.getHeaders());
     }
 
     PhotosRepository.prototype.getById = function(id) {
@@ -32,4 +30,4 @@ app.PhotosRepository = (function() {
     }
 
     return PhotosRepository;
-})();
+});
