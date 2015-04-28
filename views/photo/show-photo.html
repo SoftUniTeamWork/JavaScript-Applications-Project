@@ -1,15 +1,17 @@
 {{#photo}}
-{{#albumId}}<a href="#/photos/showalbum/{{objectId}}/1">Back to album</a>{{/albumId}}
+<ol class="breadcrumb">
+  <li>{{#albumId}}<a href="#/photos/showalbum/{{objectId}}/1"><span aria-hidden="true">&larr;</span> Back to album</a>{{/albumId}}</li>
+  <li><span class="photo-name active">{{name}}</span></li>
+</ol>
 <div class="photo-info col-xs-10 col-xs-offset-1">
-    <p class="photo-name">{{name}}</p>
     <p class="show-photo">{{#picture}}<img src="{{url}}" class="col-xs-10 col-xs-offset-1">{{/picture}}</p>
 </div>
+<a href="{{#picture}}{{url}}{{/picture}}" class="col-xs-{{#showButtons}}6{{/showButtons}}{{^showButtons}}12{{/showButtons}}" download>
+    <button class="btn btn-primary pull-left">Download</button>
+</a>
 {{#showButtons}}
 <a href="#/photos/delete/{{objectId}}/{{#albumId}}{{objectId}}{{/albumId}}" class="col-xs-6">
-    <button class="delete-button btn btn-danger pull-left">Delete</button>
+    <button class="delete-button btn btn-danger pull-right">Delete</button>
 </a>
 {{/showButtons}}
-<a href="{{#picture}}{{url}}{{/picture}}" class="col-xs-6" download>
-    <button class="btn btn-primary pull-right">Download</button>
-</a>
 {{/photo}}

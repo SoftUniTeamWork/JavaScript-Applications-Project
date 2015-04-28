@@ -1,11 +1,10 @@
-<div class="likes-info col-xs-10 col-xs-offset-1">
-    <span>Likes: {{#likes}}{{likes}}{{/likes}}</span>
+<div class="likes-info col-xs-12">
+    <span class="badge" id="likes-count">Likes: {{#likes}}{{likes}}{{/likes}}</span>
     {{#likes}}
         {{#likedPhoto}}
             {{#liked}}
             <a href="#/likes/delete/{{likeId}}/{{photoId}}">Unlike this photo</a>
             {{/liked}}
-
             {{^liked}}
             <a href="#/likes/create/{{photoId}}">Like this photo</a>
             {{/liked}}
