@@ -105,3 +105,33 @@ Parse.Cloud.afterDelete("Like", function(request, response) {
   });
 
 });
+
+//============
+
+Parse.Cloud.beforeSave('Like', function(request, response) {
+  Parse.Cloud.useMasterKey();
+  var photoId = request.object.get('photoId').id;
+  var userId = request.object.get('userId').id;
+
+  var Like = Parse.Object.extend("Like");
+  var query = new Parse.Query(Like);
+
+  query.equalTo('photoId', {"__type": "Pointer","className": "Photo","objectId": photoId});
+
+  query.find({
+    success: function(likes) {
+      var likesLength = likes.length;
+
+      for(var i = 0; i < likesLength; i++) {
+        if(likes[i].get('userId').id === userId) {
+          response.error('can\'t like the same photo twice');
+        } 
+      }
+
+      response.success();
+    },
+    error: function(error) {
+      response.error();
+    }
+  }); 
+});
