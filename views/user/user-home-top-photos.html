@@ -8,6 +8,7 @@
                     <p class="photo">{{#picture}}<img src="{{url}}" class="img-thumbnail">{{/picture}}</p>
                 </div>
             </a>
+            <span class="badge">{{#likes}}{{likes}}{{/likes}}{{^likes}}0{{/likes}} Likes</span>
         </li>
         {{/result}}
     </ul>

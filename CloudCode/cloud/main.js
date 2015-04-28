@@ -88,4 +88,18 @@ Parse.Cloud.afterSave('Like', function(request) {
   });
 });
 
+Parse.Cloud.afterDelete("Like", function(request, response) {
+  var photoId = request.object.get('photoId').id;
 
+  query = new Parse.Query("Photo");
+  query.get(photoId, {
+    success: function(photo) {
+      photo.increment("likes", -1);
+      photo.save();
+    },
+    error: function(error) {
+      console.error("Got an error " + error.code + " : " + error.message);
+    }
+  });
+
+});
