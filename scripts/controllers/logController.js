@@ -68,18 +68,26 @@ define(['helperFunctions', 'noty'], function (helpers, Noty) {
                 email: $('#reg-email').val()
             };
 
-            if ($('#repeat-password').val() !== userRegData.password) {
-                Noty.error("passwords do not match");
-            }
-            else {
-                data.usersRepository.register(userRegData)
-                    .then(function (data) {
-                        Noty.success("Registration successful.");
-                        helpers.redirectTo('#/login');
-                    },
-                    function (error) {
-                        Noty.error("Your registration has encountered an error.");
-                    });
+            if(!helpers.validateEmail(userRegData['email'])){
+                Noty.error('Please provide a valid email')
+            }else {
+                if ($('#repeat-password').val() !== userRegData.password) {
+                    Noty.error("passwords do not match");
+                }
+                else {
+                    if (userRegData.password.length < 4) {
+                        Noty.error('password is too short');
+                    } else {
+                        data.usersRepository.register(userRegData)
+                            .then(function (data) {
+                                Noty.success("Registration successful.");
+                                helpers.redirectTo('#/login');
+                            },
+                            function (error) {
+                                Noty.error("Your registration has encountered an error.");
+                            });
+                    }
+                }
             }
         });
 
