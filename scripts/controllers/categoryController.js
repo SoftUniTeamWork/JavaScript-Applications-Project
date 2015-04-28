@@ -15,7 +15,6 @@ define(['helperFunctions', 'noty', 'mustache'], function (helpers, Noty, Mustach
                 function (data) {
                     var categories = data['results'];
                     var href = window.location.href.split("/");
-                    //console.log(href[href.length-1])
                     if(href[href.length-1]==localStorage['userId']){
                         data['showEditButton'] = true;
                     }
@@ -23,13 +22,11 @@ define(['helperFunctions', 'noty', 'mustache'], function (helpers, Noty, Mustach
                     categories.forEach(function (category) {
                         if (category['ACL'][currentUserId] && category['ACL'][currentUserId]['write']) {
                             category['showButtons'] = true;
-                            //console.log(localStorage['userId'])
                         }
                     });
-                    console.log(data);
+
                     $.get('./views/category/all-categories.html', function (view) {
                         output = Mustache.render(view, data);
-                        //console.log(data['showEditButton'])
                         $(selector).html(output);
                     });
                 },

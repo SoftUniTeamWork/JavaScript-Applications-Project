@@ -148,3 +148,57 @@ Parse.Cloud.beforeSave('Category', function(request, response) {
 
   response.success();
 });
+
+Parse.Cloud.beforeSave('Album', function(request, response) {
+  Parse.Cloud.useMasterKey();
+  var userId = request.user.id;
+  
+  var Category = Parse.Object.extend('Category');
+  var categoryQuery = new Parse.Query(Category).include('userId');
+
+  categoryQuery.get(request.object.get('categoryId').id, {
+    success: function(category) {
+      if(category.get('userId').id !== userId) {
+        response.error('can\'t add album to this category');
+      }
+      response.success();
+    },
+    error: function(error) {
+      response.error('error finding category');
+    }
+  });
+});
+
+Parse.Cloud.beforeSave('Photo', function(request, response) {
+  Parse.Cloud.useMasterKey();
+  var userId = request.user.id;
+  
+  var Album = Parse.Object.extend('Album');
+  var albumQuery = new Parse.Query(Album).include('categoryId');
+  albumQuery.include('categoryId.userId');
+
+  albumQuery.get(request.object.get('albumId').id, {
+    success: function(album) {
+
+      if(album.get('categoryId').get('userId').id !== userId) {
+        response.error('can\'t add photo to this album');
+      }
+      response.success();
+    },
+    error: function(error) {
+      response.error('error finding album');
+    }
+  });
+});
+
+Parse.Cloud.beforeSave('Comment', function(request, response) {
+  Parse.Cloud.useMasterKey();
+  var userId = request.user.id;
+  var objectUserId = request.object.get('userId').id;
+
+  if(userId !== objectUserId) {
+    response.error('can\'t add comment with that user');
+  }
+
+  response.success();
+});
