@@ -162,6 +162,8 @@ define(['ajaxRequester', 'data', 'controllers', 'Sammy'], function(ajaxRequester
 
         // Error route
         this.get('#/error', function () {
+            //controllers.navigationController.showProfileNavigation(headerSelector);
+            //controllers.likeController.create(this.params['id']);
         });
 
     });

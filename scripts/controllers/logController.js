@@ -59,7 +59,7 @@ define(['helperFunctions', 'noty'], function (helpers, Noty) {
     var attachRegisterHandler = function (selector, data) {
 
 
-        $(selector).on('click', '#reg-btn', function () {
+        $(selector).find('#reg-btn').click(function () {
 
 
             var userRegData = {
