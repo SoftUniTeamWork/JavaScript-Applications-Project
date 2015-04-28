@@ -1,15 +1,15 @@
 <div class="page-header">
-    <h1 class="col-xs-offset-2">Users</h1>
+    <h1 class="col-xs-offset-3">Users</h1>
 </div>
 <div>
-    <ul class="user-list list-group col-xs-6 col-xs-offset-2">
+    <ul class="user-list list-group col-xs-6 col-xs-offset-3">
         {{#results}}
             <li class="list-group-item"><a href="#/users/{{objectId}}">{{username}}</a></li>
         {{/results}}
     </ul>
 </div>
 {{#pageInfo}}
-<div class="col-xs-6 col-xs-offset-2">
+<div class="col-xs-6 col-xs-offset-3">
     <ul class="pager">
         <li class="previous"><a href="#/users/showall/{{prevPage}}"><span aria-hidden="true">&larr;</span> prev</a></li>
         <li class="next"><a href="#/users/showall/{{nextPage}}">next <span aria-hidden="true">&rarr;</span></a></li>
