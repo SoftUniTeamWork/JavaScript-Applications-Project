@@ -135,3 +135,16 @@ Parse.Cloud.beforeSave('Like', function(request, response) {
     }
   }); 
 });
+
+
+Parse.Cloud.beforeSave('Category', function(request, response) {
+  Parse.Cloud.useMasterKey();
+  var userId = request.user.id;
+  var objectUserId = request.object.get('userId').id;
+
+  if(userId !== objectUserId) {
+    response.error('can\'t add category to other user');
+  }
+
+  response.success();
+});
