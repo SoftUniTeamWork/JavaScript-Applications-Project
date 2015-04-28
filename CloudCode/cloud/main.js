@@ -74,12 +74,13 @@ Parse.Cloud.define('getMostLikedPhotos', function(request, response) {
 });
 
 Parse.Cloud.afterSave('Like', function(request) {
+  Parse.Cloud.useMasterKey();
   var photoId = request.object.get('photoId').id;
 
   query = new Parse.Query("Photo");
   query.get(photoId, {
     success: function(photo) {
-      photo.increment("likes");
+      photo.increment("likes", 1);
       photo.save();
     },
     error: function(error) {
@@ -89,6 +90,7 @@ Parse.Cloud.afterSave('Like', function(request) {
 });
 
 Parse.Cloud.afterDelete("Like", function(request, response) {
+  Parse.Cloud.useMasterKey();
   var photoId = request.object.get('photoId').id;
 
   query = new Parse.Query("Photo");
