@@ -5,7 +5,7 @@ var app = app || {};
     var ajaxRequester = app.ajaxRequester.get();
     var data = app.data.get(baseUrl, ajaxRequester);
 
-    var controllers = app.controller.getControllers(data);
+    var controllers = app.controllersRepo.getControllers(data);
     //controller.attachEventHandlers();
 
     app.router = Sammy(function () {
@@ -161,6 +161,11 @@ var app = app || {};
             controllers.navigationController.showProfileNavigation(headerSelector);
             controllers.likeController.delete(this.params['id'], this.params['photoId']);
         });
+
+        // Error route
+        this.get('#/error', function () {
+        });
+
     });
 
     app.router.run('#/login');
