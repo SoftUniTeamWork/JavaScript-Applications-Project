@@ -164,6 +164,8 @@ var app = app || {};
 
         // Error route
         this.get('#/error', function () {
+            //controllers.navigationController.showProfileNavigation(headerSelector);
+            //controllers.likeController.create(this.params['id']);
         });
 
     });

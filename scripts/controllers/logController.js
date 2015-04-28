@@ -64,7 +64,7 @@ app.LogController = (function () {
     var attachRegisterHandler = function (selector, data) {
 
 
-        $(selector).on('click', '#reg-btn', function () {
+        $(selector).find('#reg-btn').click(function () {
 
 
             var userRegData = {
