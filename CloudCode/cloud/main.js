@@ -80,7 +80,7 @@ Parse.Cloud.afterSave('Like', function(request) {
   query = new Parse.Query("Photo");
   query.get(photoId, {
     success: function(photo) {
-      photo.increment("likes", 1);
+      photo.increment("likes");
       photo.save();
     },
     error: function(error) {
@@ -105,8 +105,6 @@ Parse.Cloud.afterDelete("Like", function(request, response) {
   });
 
 });
-
-//============
 
 Parse.Cloud.beforeSave('Like', function(request, response) {
   Parse.Cloud.useMasterKey();
@@ -169,28 +167,6 @@ Parse.Cloud.beforeSave('Album', function(request, response) {
   });
 });
 
-Parse.Cloud.beforeSave('Photo', function(request, response) {
-  Parse.Cloud.useMasterKey();
-  var userId = request.user.id;
-  
-  var Album = Parse.Object.extend('Album');
-  var albumQuery = new Parse.Query(Album).include('categoryId');
-  albumQuery.include('categoryId.userId');
-
-  albumQuery.get(request.object.get('albumId').id, {
-    success: function(album) {
-
-      if(album.get('categoryId').get('userId').id !== userId) {
-        response.error('can\'t add photo to this album');
-      }
-      response.success();
-    },
-    error: function(error) {
-      response.error('error finding album');
-    }
-  });
-});
-
 Parse.Cloud.beforeSave('Comment', function(request, response) {
   Parse.Cloud.useMasterKey();
   var userId = request.user.id;
@@ -202,3 +178,25 @@ Parse.Cloud.beforeSave('Comment', function(request, response) {
 
   response.success();
 });
+
+// Parse.Cloud.beforeSave('Photo', function(request, response) {
+//   Parse.Cloud.useMasterKey();
+//   var userId = request.user.id;
+  
+//   var Album = Parse.Object.extend('Album');
+//   var albumQuery = new Parse.Query(Album).include('categoryId');
+//   albumQuery.include('categoryId.userId');
+
+//   albumQuery.get(request.object.get('albumId').id, {
+//     success: function(album) {
+
+//       if(album.get('categoryId').get('userId').id !== userId) {
+//         response.error('can\'t add photo to this album');
+//       }
+//       response.success();
+//     },
+//     error: function(error) {
+//       response.error('error finding album');
+//     }
+//   });
+// });
