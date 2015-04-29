@@ -166,6 +166,15 @@ define(['ajaxRequester', 'data', 'controllers', 'Sammy'], function(ajaxRequester
             //controllers.likeController.create(this.params['id']);
         });
 
+        // Default route
+        this.get('#/default', function() {
+            if(data.usersRepository.isLogged()) {
+                window.location = '#/users/home/' + localStorage['userId'];
+            } else {
+                window.location = '#/login';
+            }
+        });
+
     });
 
     return app;

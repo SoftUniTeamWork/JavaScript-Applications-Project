@@ -39,5 +39,5 @@ requirejs.config({
 });
 
 requirejs(['jQuery', 'app'], function ($, app) {
-    app.router.run('#/login');
+    app.router.run('#/default');
 });

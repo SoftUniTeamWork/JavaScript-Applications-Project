@@ -10,21 +10,12 @@ define(['credentials'], function(credentials) {
         var url = this._serviceUrl + 'login?username=' + username + '&password=' + password;
 
         return this._ajaxRequester.get(url, credentials.getHeaders());
-        // .then(function (data) {
-        //     credentials.setSessionToken(data.sessionToken);
-        //     credentials.setUsername(data.username);
-        //     credentials.setUserId(data.objectId);
-        //     return data;
-        // });
     }
 
     Users.prototype.register = function (userRegData) {
         var url = this._serviceUrl + 'users';
 
         return this._ajaxRequester.post(url, userRegData, credentials.getHeaders());
-        // .then(function (data) {
-        //     return data;
-        // });
     }
 
     Users.prototype.editProfile = function (userId, userProfileData) {
