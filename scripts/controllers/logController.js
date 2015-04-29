@@ -58,7 +58,6 @@ define(['helperFunctions', 'noty'], function (helpers, Noty) {
 
     var attachRegisterHandler = function (selector, data) {
 
-
         $(selector).find('#reg-btn').click(function () {
 
 
@@ -68,9 +67,9 @@ define(['helperFunctions', 'noty'], function (helpers, Noty) {
                 email: $('#reg-email').val()
             };
 
-            if(!helpers.validateEmail(userRegData['email'])){
+            if (!helpers.validateEmail(userRegData['email'])) {
                 Noty.error('Please provide a valid email')
-            }else {
+            } else {
                 if ($('#repeat-password').val() !== userRegData.password) {
                     Noty.error("passwords do not match");
                 }
@@ -78,10 +77,14 @@ define(['helperFunctions', 'noty'], function (helpers, Noty) {
                     if (userRegData.password.length < 4) {
                         Noty.error('password is too short');
                     } else {
+
+                        var _data = data;
                         data.usersRepository.register(userRegData)
                             .then(function (data) {
+                                data['username']=userRegData['username'];
+                                 _data.usersRepository.setUserData(data);
                                 Noty.success("Registration successful.");
-                                helpers.redirectTo('#/login');
+                                helpers.redirectTo('#/users/home/' + data['objectId']);
                             },
                             function (error) {
                                 Noty.error("Your registration has encountered an error.");
